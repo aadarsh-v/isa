@@ -1,5 +1,8 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState, useRef } from 'react';
 import characters from './data/characters.json';
+import importedStatistics from './data/playerStatistics.json';
+import statisticDefinitions from './data/statisticDefinitions.json';
+import { createClient } from '@supabase/supabase-js';
 
 // Load mugshot images (Vite)
 const MUGSHOTS = import.meta.glob('../images/*mugshot.png', { eager: true, as: 'url' });
@@ -71,7 +74,6 @@ const familyKey = s => {
 function chemistryMatches(entry, target) {
   if (slug(entry) === slug(target.name)) return true;
   if (slug(target.name).includes("black") && !slug(target.name).includes("mii")) return false;
-  if (slug(target.name).includes("white") && !slug(target.name).includes("mii")) return false;
   const e = familyKey(entry);
   const n = familyKey(target.name);
   if (e === n) return true;
@@ -95,11 +97,11 @@ function fieldScore(c) {
     + ((s.Fielding ?? 0) / 100 * 32) + dive;
 }
 function tierFor(score) {
-  if (score >= 75) return { label: 'S', name: '', cls: 'tier-s' };
-  if (score >= 67) return { label: 'A', name: '', cls: 'tier-a' };
-  if (score >= 55) return { label: 'B', name: '', cls: 'tier-b' };
-  if (score >= 50) return { label: 'C', name: '', cls: 'tier-c' };
-  return { label: 'D', name: '', cls: 'tier-d' };
+  if (score >= 82) return { label: 'S', name: 'Elite', cls: 'tier-s' };
+  if (score >= 72) return { label: 'A', name: 'Strong', cls: 'tier-a' };
+  if (score >= 62) return { label: 'B', name: 'Solid', cls: 'tier-b' };
+  if (score >= 50) return { label: 'C', name: 'Situational', cls: 'tier-c' };
+  return { label: 'D', name: 'Needs help', cls: 'tier-d' };
 }
 function initials(name) { return name.split(/\s+/).slice(0,2).map(x => x[0]).join('').toUpperCase(); }
 
@@ -123,33 +125,89 @@ function PlayerAvatar({ player, small = false }) {
   if (src) return <div className={cls} aria-hidden="true"><img src={src} alt={player.name + ' portrait'} /></div>;
   return <div className={cls} aria-hidden="true">{initials(player.name)}</div>;
 }
-function StatBar({ label, value, max }) {
-  const valid = typeof value === 'number';
-  return <div className="stat-line"><div className="stat-line-top"><span>{label}</span><b>{valid ? value : '—'}<small> / {max}</small></b></div><div className="meter"><span style={{width: `${valid ? Math.min(100, value / max * 100) : 0}%`}} /></div></div>;
+const HITBOX_STAT_MAX = 7;
+function StatBar({ label, value, max, maxLabel, formatValue, compact = false }) {
+  const valid = typeof value === 'number' && Number.isFinite(value);
+  const shownValue = valid ? (formatValue ? formatValue(value) : value) : '—';
+  const shownMax = maxLabel ?? max;
+  const progress = valid && typeof max === 'number' && max > 0 ? Math.min(100, Math.max(0, value / max * 100)) : 0;
+  return <div className={`stat-line ${compact ? 'stat-line-compact' : ''}`}>
+    <div className="stat-line-top"><span>{label}</span><b>{shownValue}<small> / {shownMax}</small></b></div>
+    <div className="meter" role="img" aria-label={`${label}: ${shownValue} on a scale of ${shownMax}`}><span style={{ width: `${progress}%` }} /></div>
+  </div>;
 }
+function getPlayerSeasonMetrics(player) {
+  const values = importedStatistics?.[player?.id] || {};
+  const inningsPitched = values.IP;
+  const hasPitched = typeof inningsPitched === 'number' && Number.isFinite(inningsPitched) && inningsPitched > 0;
+  return statisticDefinitions.filter(definition => {
+    const value = values[definition.key];
+    if (definition.category === 'Pitching') {
+      // Only show pitching lines for players with actual innings pitched. Once
+      // eligible, keep IP/ERA/WHIP visible even if one field is unavailable.
+      if (!hasPitched) return false;
+      if (['IP', 'ERA', 'WHIP'].includes(definition.key)) return true;
+    }
+    return typeof value === 'number' && Number.isFinite(value);
+  }).map(definition => ({ ...definition, value: values[definition.key] }));
+}
+function getSortValue(player, key) {
+  if (key === 'name') return player?.name ?? '';
+  if (key === 'hitbox:diveRadius') return player?.hitboxes?.diveRadius;
+  if (key === 'hitbox:regularCatch') return player?.hitboxes?.regularCatch;
+  if (key === 'hitbox:hitboxHeight') return player?.hitboxes?.hitboxHeight;
+  if (key.startsWith('season:')) return importedStatistics?.[player?.id]?.[key.slice('season:'.length)];
+  return player?.stats?.[key];
+}
+
+function formatMetricValue(value, decimals = 3, format = 'decimal') {
+  if (!Number.isFinite(value)) return '—';
+  const rendered = value.toFixed(decimals);
+  return format === 'decimal' && Math.abs(value) < 1 ? rendered.replace(/^(-?)0\./, '$1.') : rendered;
+}
+function HitboxMetrics({ player, compact = false, showTitle = true }) {
+  const hitboxes = player?.hitboxes;
+  return <div className={`player-hitbox-stats ${compact ? 'player-hitbox-stats-compact' : ''}`}>
+    {showTitle && <div className="player-stat-section-title">Gameplay hitboxes</div>}
+    <StatBar label="Dive radius" value={hitboxes?.diveRadius} max={HITBOX_STAT_MAX} maxLabel={HITBOX_STAT_MAX.toFixed(1)} formatValue={v => v.toFixed(2)} compact={compact} />
+    <StatBar label="Regular catch" value={hitboxes?.regularCatch} max={HITBOX_STAT_MAX} maxLabel={HITBOX_STAT_MAX.toFixed(1)} formatValue={v => v.toFixed(2)} compact={compact} />
+    <StatBar label="Hitbox height" value={hitboxes?.hitboxHeight} max={HITBOX_STAT_MAX} maxLabel={HITBOX_STAT_MAX.toFixed(1)} formatValue={v => v.toFixed(2)} compact={compact} />
+  </div>;
+}
+function ImportedStatistics({ player, compact = false }) {
+  const metrics = getPlayerSeasonMetrics(player);
+  if (!metrics.length) return null;
+  const groups = metrics.reduce((result, metric) => {
+    const group = metric.category || 'Other';
+    (result[group] ||= []).push(metric);
+    return result;
+  }, {});
+  return <div className={`player-imported-stats ${compact ? 'player-imported-stats-compact' : ''}`}>
+    {Object.entries(groups).map(([group, groupMetrics]) => <div className="imported-stat-group" key={group}>
+      {Object.keys(groups).length > 1 && <div className="imported-stat-group-label">{group}</div>}
+      {groupMetrics.map(metric => <StatBar key={metric.key} label={metric.label} value={metric.value} max={metric.max} maxLabel={metric.maxLabel || metric.max} formatValue={v => formatMetricValue(v, metric.decimals ?? 3, metric.format)} compact={compact} />)}
+    </div>)}
+  </div>;
+}
+
 function PlayerCard({ player, onClick }) {
-  const field = player.stats['Fielding'];
+  const importedMetrics = getPlayerSeasonMetrics(player);
   return (
-    <button className="player-card" onClick={onClick}>
+    <button className="player-card" onClick={onClick} type="button" aria-label={`View ${player.name} player profile`}>
       <div className="player-card-top">
         <PlayerAvatar player={player} />
         <div className="player-name-wrap">
           <h3>{player.name}</h3>
           <p>{player.class || 'Class unknown'} · {player.captain ? 'Captain' : 'Player'}</p>
         </div>
-        <span className="arrow">↗</span>
+        <span className="arrow" aria-hidden="true">↗</span>
       </div>
       <div className="chips">
         <span className="chip ability">{player.class || 'No class listed'}</span>
         <span className="chip class">{player.ability || 'No ability listed'}</span>
-        <span className="chip trajectory">{player.stats.Trajectory + " Trajectory" || 'No trajectory listed'}</span>
-        
-        {/* Conditional Hit Curve Chip */}
-        {player.stats["Hit Curve"] === "Enabled" && (
-          <span className="chip hit-curve">Hit Curve</span>
-        )}
+        <span className="chip trajectory">{player.stats.Trajectory ? `${player.stats.Trajectory} Trajectory` : 'No trajectory listed'}</span>
+        {player.stats['Hit Curve'] === 'Enabled' && <span className="chip hit-curve">Hit Curve</span>}
       </div>
-      {/* <div className="mini-stats"><span><b>{player.stats['Slap Contact'] ?? '—'}</b><small>Contact</small></span><span><b>{player.stats['Charge Power'] ?? '—'}</b><small>Charge power</small></span><span><b>{field ?? '—'}</b><small>Fielding</small></span></div> */}
     </button>
   );
 }
@@ -160,7 +218,10 @@ function PlayerModal({ player, close }) {
     <div className="profile-heading"><PlayerAvatar player={player}/><div><div className="eyebrow">PLAYER PROFILE</div><h2>{player.name}</h2><p>{player.class} class · {player.captain ? 'Captain' : 'Non-captain'} · {player.ability || 'No ability listed'}</p></div></div>
     <div className="meta-grid"><div><small>Bats</small><b>{player.bats || '—'}</b></div><div><small>Throws</small><b>{player.throws || '—'}</b></div><div><small>Ability</small><b>{player.ability || '—'}</b></div></div>
     <div className="stats-grid">{Object.entries(statGroups).map(([group, labels]) => <div className="panel stat-panel" key={group}><h3>{group}</h3>{labels.map(label => <StatBar key={label} label={label} value={player.stats[label]} max={label==='Slap Contact'?80:label==='Charge Contact'?60:label==='Fastball Speed'?175:label==='Curveball Speed'?150:label==='Curve'?90:label==='Fielding Throw Speed'?90:label==='Speed'?90:label==='Weight'?4:100}/>)}
-    {group==='Batting' && <div className="profile-note"><span>Trajectory <b>{player.stats.Trajectory || '—'}</b></span><span>Hit curve <b>{player.stats['Hit Curve'] || '—'}</b></span></div>}</div>)}</div>
+    {group==='Batting' && <div className="profile-note"><span>Trajectory <b>{player.stats.Trajectory || '—'}</b></span><span>Hit curve <b>{player.stats['Hit Curve'] || '—'}</b></span></div>}</div>)}
+      <div className="panel stat-panel"><h3>Hitboxes</h3><HitboxMetrics player={player} showTitle={false}/></div>
+      {getPlayerSeasonMetrics(player).length > 0 && <div className="panel stat-panel"><h3>Preseason Stats</h3><ImportedStatistics player={player}/></div>}
+    </div>
     <div className="chem-columns"><div className="panel"><h3 className="good-text">＋ Good chemistry</h3><div className="tag-list">{(player.goodChemistry || []).map(x=><span className="chem-tag good" key={x}>{x}</span>)}{!player.goodChemistry?.length && <span className="muted">None listed</span>}</div></div><div className="panel"><h3 className="bad-text">− Bad chemistry</h3><div className="tag-list">{(player.badChemistry || []).map(x=><span className="chem-tag bad" key={x}>{x}</span>)}{!player.badChemistry?.length && <span className="muted">None listed</span>}</div></div></div>
   </section></div>;
 }
@@ -171,13 +232,21 @@ function PlayersTab({ onSelect }) {
   const [captain,setCaptain]=useState('All players');
   const [trajectory,setTrajectory]=useState('All trajectories');
   const [hitCurve,setHitCurve]=useState('All hit curves');
-  const [sortBy,setSortBy]=useState('Name');
+  const [sortBy,setSortBy]=useState('name');
   const [sortDir,setSortDir]=useState('asc');
   const classes=['All classes',...new Set(characters.map(c=>c.class).filter(Boolean))].sort((a,b)=>a==='All classes'?-1:a.localeCompare(b));
   const abilities=['All abilities',...new Set(characters.map(c=>c.ability).filter(Boolean))].sort((a,b)=>a==='All abilities'?-1:a.localeCompare(b));
   const trajectories=['All trajectories',...new Set(characters.map(c=>c.stats?.Trajectory).filter(Boolean))].sort((a,b)=>a==='All trajectories'?-1:a.localeCompare(b));
   const hitCurves=['All hit curves',...new Set(characters.map(c=>c.stats?.['Hit Curve']).filter(Boolean))].sort((a,b)=>a==='All hit curves'?-1:a.localeCompare(b));
-  const sortOptions=['Name',...Object.keys(characters[0]?.stats||{}).filter(k=>typeof characters.find(c=>typeof c.stats?.[k]==='number')?.stats?.[k]==='number')];
+  const numericStatKeys=[...new Set(characters.flatMap(c=>Object.entries(c.stats||{}).filter(([,v])=>typeof v==='number'&&Number.isFinite(v)).map(([key])=>key)))].sort((a,b)=>a.localeCompare(b));
+  const sortOptions=[
+    {key:'name',label:'Name',group:'General'},
+    ...numericStatKeys.map(key=>({key,label:key,group:'Player attributes'})),
+    {key:'hitbox:diveRadius',label:'Dive radius',group:'Gameplay hitboxes'},
+    {key:'hitbox:regularCatch',label:'Regular catch',group:'Gameplay hitboxes'},
+    {key:'hitbox:hitboxHeight',label:'Hitbox height',group:'Gameplay hitboxes'},
+    ...statisticDefinitions.map(def=>({key:`season:${def.key}`,label:`${def.label}${def.category?` · ${def.category}`:''}`,group:'Season statistics'}))
+  ];
   const filtered=useMemo(()=>characters.filter(c=>{
     const q=query.toLowerCase();
     return (c.name.toLowerCase().includes(q)||(c.ability||'').toLowerCase().includes(q))
@@ -187,24 +256,29 @@ function PlayersTab({ onSelect }) {
       && (trajectory==='All trajectories'||c.stats?.Trajectory===trajectory)
       && (hitCurve==='All hit curves'||c.stats?.['Hit Curve']===hitCurve);
   }).sort((a,b)=>{
-    let cmp=0;
-    if(sortBy==='Name') cmp=a.name.localeCompare(b.name);
-    else cmp=(Number(a.stats?.[sortBy]??-Infinity)-Number(b.stats?.[sortBy]??-Infinity));
+    const av=getSortValue(a,sortBy), bv=getSortValue(b,sortBy);
+    const aMissing=av===null||av===undefined||av===''||typeof av==='number'&&!Number.isFinite(av);
+    const bMissing=bv===null||bv===undefined||bv===''||typeof bv==='number'&&!Number.isFinite(bv);
+    // Keep unavailable values at the bottom for both ascending and descending sorts.
+    if(aMissing!==bMissing) return aMissing?1:-1;
+    if(aMissing&&bMissing) return a.name.localeCompare(b.name);
+    let cmp=sortBy==='name'?String(av).localeCompare(String(bv)):Number(av)-Number(bv);
     return (sortDir==='asc'?cmp:-cmp)||a.name.localeCompare(b.name);
   }),[query,klass,ability,captain,trajectory,hitCurve,sortBy,sortDir]);
-  return <><div className="page-intro"><div><div className="eyebrow">LEAGUE DATABASE / PLAYER SCOUTING</div><h2>Character index</h2><p>Filter the roster by role and swing profile, then sort any numeric attribute to build a draft shortlist.</p></div><div className="count-pill">{filtered.length} <span>/ {characters.length} players</span></div></div>
+  const resetFilters=()=>{setQuery('');setKlass('All classes');setAbility('All abilities');setCaptain('All players');setTrajectory('All trajectories');setHitCurve('All hit curves');setSortBy('name');setSortDir('asc');};
+  return <><div className="page-intro"><div><div className="eyebrow">PLAYER DIRECTORY</div><h2>Explore Players</h2><p>Compare player attributes, gameplay hitboxes, and season performance.</p></div><div className="count-pill">{filtered.length} <span>/ {characters.length} players</span></div></div>
     <div className="index-toolbar panel">
-      <label className="search-box"><span>⌕</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search characters or abilities…" /></label>
-      <label className="control-label">Sort by<select value={sortBy} onChange={e=>{setSortBy(e.target.value);setSortDir(e.target.value==='Name'?'asc':'desc');}}>{sortOptions.map(x=><option key={x}>{x}</option>)}</select></label>
-      <button className="sort-direction" onClick={()=>setSortDir(d=>d==='asc'?'desc':'asc')} aria-label={`Sort ${sortDir==='asc'?'descending':'ascending'}`}>{sortDir==='asc'?'↑ Asc':'↓ Desc'}</button>
+      <label className="search-box"><span>⌕</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search players or abilities…" /></label>
+      <label className="control-label">Sort by<select value={sortBy} onChange={e=>{setSortBy(e.target.value);setSortDir(e.target.value==='name'?'asc':'desc');}}>{['General','Player attributes','Gameplay hitboxes','Season statistics'].map(group=><optgroup key={group} label={group}>{sortOptions.filter(x=>x.group===group).map(x=><option key={x.key} value={x.key}>{x.label}</option>)}</optgroup>)}</select></label>
+      <button className="sort-direction" onClick={()=>setSortDir(d=>d==='asc'?'desc':'asc')} aria-label={`Sort ${sortDir==='asc'?'descending':'ascending'}`}>{sortDir==='asc'?'↑ Ascending':'↓ Descending'}</button>
       <label className="control-label">Class<select value={klass} onChange={e=>setKlass(e.target.value)}>{classes.map(x=><option key={x}>{x}</option>)}</select></label>
       <label className="control-label">Ability<select value={ability} onChange={e=>setAbility(e.target.value)}>{abilities.map(x=><option key={x}>{x}</option>)}</select></label>
       <label className="control-label">Roster role<select value={captain} onChange={e=>setCaptain(e.target.value)}><option>All players</option><option>Captains</option><option>Non-captains</option></select></label>
       <label className="control-label">Trajectory<select value={trajectory} onChange={e=>setTrajectory(e.target.value)}>{trajectories.map(x=><option key={x}>{x}</option>)}</select></label>
       <label className="control-label">Hit curve<select value={hitCurve} onChange={e=>setHitCurve(e.target.value)}>{hitCurves.map(x=><option key={x}>{x}</option>)}</select></label>
-      <button className="reset-filters" onClick={()=>{setQuery('');setKlass('All classes');setAbility('All abilities');setCaptain('All players');setTrajectory('All trajectories');setHitCurve('All hit curves');setSortBy('Name');setSortDir('asc');}}>Reset filters</button>
+      <button className="reset-filters" onClick={resetFilters}>Reset filters</button>
     </div>
-    <div className="index-summary"><span>{sortBy==='Name'?'Alphabetical index':`Sorted by ${sortBy}`}</span><span>Click a player for full scouting report</span></div>
+    <div className="index-summary"><span>{sortOptions.find(x=>x.key===sortBy)?.label || sortBy} · {sortDir==='asc'?'ascending':'descending'}</span><span>{filtered.length} matching players</span></div>
     <div className="player-grid">{filtered.map(c=><PlayerCard key={c.id} player={c} onClick={()=>onSelect(c)}/>)}</div>{!filtered.length&&<div className="empty-state">No players match those filters.</div>}</>;
 }
 function ChemistryTab() {
@@ -288,8 +362,8 @@ function ChemistryTab() {
       <div className="page-intro">
         <div>
           <div className="eyebrow" style={{ color: '#38bdf8' }}>SYNERGY EXPLORER</div>
-          <h2 style={{ color: '#f8fafc' }}>De-cluttered Radial Radar</h2>
-          <p style={{ color: '#94a3b8' }}>Characters grouped by Class. Unfocused text labels are automatically dimmed to prevent visual overlap.</p>
+          <h2 style={{ color: '#f8fafc' }}>Team Chemistry</h2>
+          <p style={{ color: '#94a3b8' }}>Explore the strongest connections and rivalries for each player.</p>
         </div>
       </div>
 
@@ -466,7 +540,155 @@ function ChemistryTab() {
   );
 }
 
-const teamNames=['Arnav','Joey','Alex','Jared','Aadarsh','Dhruv','Eshaan','Henry','Matthew','A1'];
+const teamNames = ['Joey','Eshaan','Arnav','Dhruv','Matthew','Alex','Henry','Aadarsh','Jared', 'A1'];
+const draftingTeams = teamNames.filter(team => team !== 'A1');
+const REGULAR_DRAFT_ROUNDS = 10;
+const PICKS_PER_REGULAR_ROUND = draftingTeams.length;
+const TOTAL_MANUAL_PICKS = REGULAR_DRAFT_ROUNDS * PICKS_PER_REGULAR_ROUND;
+const TOTAL_PLAYER_COUNT = characters.length;
+const A1_AUTO_ASSIGNMENT_COUNT = Math.max(0, TOTAL_PLAYER_COUNT - TOTAL_MANUAL_PICKS);
+const AUTO_ASSIGNMENT_ROUND = REGULAR_DRAFT_ROUNDS + 1;
+function teamForPickIndex(index) {
+  if (index < 0 || index >= TOTAL_MANUAL_PICKS) return null;
+  const numTeams = draftingTeams.length;
+  const round = Math.floor(index / numTeams); 
+  const pickInRound = index % numTeams;
+  if (round < 4) {
+    return draftingTeams[pickInRound];
+  }
+  const isBackward = (round % 2 === 0);
+  const targetIndex = isBackward ? (numTeams - 1 - pickInRound) : pickInRound;
+  return draftingTeams[targetIndex];
+}
+function roundForPickCount(count) {
+  if (count >= TOTAL_MANUAL_PICKS) return REGULAR_DRAFT_ROUNDS;
+  return Math.floor(count / PICKS_PER_REGULAR_ROUND) + 1;
+}
+function effectiveDraftPickCount(state) {
+  return Array.isArray(state?.picks) ? state.picks.length : 0;
+}
+function getAutoAssignedPicks(playerPool, manualPicks) {
+  if (effectiveDraftPickCount({ picks: manualPicks }) < TOTAL_MANUAL_PICKS) return [];
+  const pickedIds = new Set(manualPicks.map(pick => String(pick.playerId)));
+  return playerPool.filter(player => !pickedIds.has(String(player.id))).map((player, index) => ({
+    round: AUTO_ASSIGNMENT_ROUND,
+    pickNumber: TOTAL_MANUAL_PICKS + index + 1,
+    team: 'A1',
+    playerId: String(player.id),
+    automatic: true
+  }));
+}
+function getAllRosterAssignments(state, playerPool) {
+  const manualPicks = Array.isArray(state?.picks) ? state.picks : [];
+  return [...manualPicks, ...getAutoAssignedPicks(playerPool, manualPicks)];
+}
+
+// Configure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to share the draft
+// between browsers. Without them, localStorage remains a local-development fallback.
+const INITIAL_DRAFT_STATE = { picks: [], currentTurnIndex: 0, isPaused: false };
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
+
+function useSharedDraftState() {
+  const [draftState, setDraftState] = useState(readDraftState);
+  const [syncStatus, setSyncStatus] = useState(supabase ? 'connecting' : 'local-only');
+
+  useEffect(() => {
+    if (!supabase) {
+      setSyncStatus('local-only');
+      return undefined;
+    }
+    let alive = true;
+    let channel;
+    const applyState = state => {
+      if (!alive || !state || !Array.isArray(state.picks)) return;
+      // Picks are the canonical sequence. This also repairs old/mismatched turn counters.
+      const normalized = { ...INITIAL_DRAFT_STATE, ...state, currentTurnIndex: state.picks.length };
+      setDraftState(normalized);
+      setSyncStatus('live');
+    };
+    const loadState = async () => {
+      const { data, error } = await supabase.from('league_draft_state')
+        .select('state').eq('id', 1).single();
+      if (!alive) return;
+      if (error) {
+        console.error('Could not load shared draft:', error);
+        setSyncStatus('error');
+        return;
+      }
+      applyState(data?.state);
+    };
+    channel = supabase.channel('league-draft-state')
+      .on('postgres_changes', {
+        event: '*', schema: 'public', table: 'league_draft_state', filter: 'id=eq.1'
+      }, payload => applyState(payload.new?.state))
+      .subscribe(status => {
+        if (!alive) return;
+        if (status === 'SUBSCRIBED') loadState();
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          setSyncStatus('error');
+        }
+      });
+    return () => {
+      alive = false;
+      if (channel) supabase.removeChannel(channel);
+    };
+  }, []);
+
+  // Local storage is intentionally only a no-backend development fallback.
+  useEffect(() => {
+    if (!supabase) {
+      try { localStorage.setItem('ss_draft_state', JSON.stringify(draftState)); } catch {}
+    }
+  }, [draftState]);
+
+  const makePick = async (team, playerId) => {
+    if (!supabase) {
+      const current = readDraftState();
+      const pickCount = effectiveDraftPickCount(current);
+      const expectedTeam = teamForPickIndex(pickCount);
+      if (!expectedTeam) throw new Error('The 90-pick draft is complete. A1 automatically receives all remaining players.');
+      if (team !== expectedTeam) throw new Error(`It is ${expectedTeam}'s turn.`);
+      if (current.picks.some(p => String(p.playerId) === String(playerId))) throw new Error('That player has already been drafted.');
+      const next = {
+        ...current,
+        picks: [...current.picks, {
+          round: roundForPickCount(pickCount),
+          pickNumber: pickCount + 1,
+          team: expectedTeam,
+          playerId: String(playerId)
+        }],
+        currentTurnIndex: pickCount + 1
+      };
+      setDraftState(next);
+      return next;
+    }
+    if (!supabaseUrl || !supabaseAnonKey) throw new Error('Supabase is not configured. Check the VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY build variables.');
+    const { data, error } = await supabase.rpc('draft_player', { p_team: team, p_player_id: String(playerId) });
+    if (error) throw new Error(error.message || 'The database rejected this pick.');
+    if (!data || !Array.isArray(data.picks)) throw new Error('The database returned an unexpected draft response. Re-run the supplied Supabase SQL migration.');
+    const normalized = { ...INITIAL_DRAFT_STATE, ...data, currentTurnIndex: data.picks.length };
+    setDraftState(normalized);
+    return normalized;
+  };
+
+  const resetSharedDraft = async () => {
+    if (!supabase) {
+      const empty = { ...INITIAL_DRAFT_STATE };
+      setDraftState(empty);
+      return empty;
+    }
+    const { data, error } = await supabase.rpc('reset_league_draft');
+    if (error) throw new Error(error.message || 'The database rejected the draft reset.');
+    if (!data || !Array.isArray(data.picks)) throw new Error('The database returned an unexpected reset response.');
+    const normalized = { ...INITIAL_DRAFT_STATE, ...data, currentTurnIndex: data.picks.length };
+    setDraftState(normalized);
+    return normalized;
+  };
+
+  return { draftState, syncStatus, makePick, resetSharedDraft };
+}
 // function RostersTab({onSelect}) {
 //   const [team,setTeam]=useState('All teams');
 //   const rosters=useMemo(()=>{
@@ -478,7 +700,7 @@ const teamNames=['Arnav','Joey','Alex','Jared','Aadarsh','Dhruv','Eshaan','Henry
 //     return teamNames.map((name,i)=>({name,players:shuffled.slice(i*9,(i+1)*9)}));
 //   },[]);
 //   const visible=rosters.filter(t=>team==='All teams'||t.name===team);
-//   return <><div className="page-intro"><div><div className="eyebrow">CPU LEAGUE</div><h2>Team rosters</h2><p>Sample rosters are assigned deterministically for the prototype. Replace the assignment data when your league teams are finalized.</p></div><div className="count-pill">4 <span>teams</span></div></div>
+//   return <><div className="page-intro"><div><div className="eyebrow">CPU LEAGUE</div><h2>Team rosters</h2><p>Sample rosters are assigned deterministically for the prototype. Replace the assignment data when your league teams are finalized.</p></div><div className="count-pill">{teamNames.length} <span>teams</span></div></div>
 //     <div className="filter-bar"><label className="select-label">Show roster<select value={team} onChange={e=>setTeam(e.target.value)}><option>All teams</option>{teamNames.map(t=><option key={t}>{t}</option>)}</select></label></div>
 //     <div className="roster-grid">{visible.map((t,i)=><section className="panel roster-panel" key={t.name}><div className={`team-banner team-${teamNames.indexOf(t.name)}`}><div><span className="eyebrow">TEAM {String(teamNames.indexOf(t.name)+1).padStart(2,'0')}</span><h3>{t.name}</h3></div><span className="team-count">{t.players.length} players</span></div><div className="roster-list">{t.players.map((p,j)=><button className="roster-player" key={p.id} onClick={()=>onSelect(p)}><PlayerAvatar player={p} small/><span className="roster-player-name"><b>{p.name}</b><small>{p.class} · {p.ability || 'No ability listed'}</small></span><span className="roster-rating">{Math.round(fieldScore(p))}</span></button>)}</div></section>)}</div>
 //   </>;
@@ -514,7 +736,7 @@ function OutfieldTab() {
   const configurations=useMemo(()=>{
     const result=[];
     for(const cf of characters) {
-      const candidates=characters.filter(p=>p.id!==cf.id && (hasGoodChemistry(cf,p) || hasGoodChemistry(p,cf)));
+      const candidates=characters.filter(p=>p.id!==cf.id && hasGoodChemistry(cf,p));
       for(let i=0;i<candidates.length;i++) for(let j=i+1;j<candidates.length;j++) {
         const a=candidates[i],b=candidates[j];
         // Store each pair of corner fielders once; their LF/RF assignment is symmetric for this ranking.
@@ -533,7 +755,7 @@ function OutfieldTab() {
   return <><div className="page-intro"><div><div className="eyebrow">DEFENSIVE LINEUPS </div><h2>Outfield Possibilities</h2></div><div className="count-pill">{configurations.length.toLocaleString()} <span>matching combos</span></div></div>
     <div className="lock-panel panel"><div className="lock-panel-heading"><div><h3>Lock Players into the Outfield</h3></div><button className="reset-filters" onClick={()=>setLocked(['','',''])}>Clear locks</button></div><div className="lock-selects">{locked.map((value,i)=><label className="control-label" key={i}>Player {i+1}<select value={value} onChange={e=>setLock(i,e.target.value)}>{playerOptions.filter(p=>!p.id||p.id===value||!locked.includes(p.id)).map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select></label>)}</div>{selectedIds.length>0&&<p className="lock-status">Searching for outfields containing <b>{selectedIds.map(id=>characters.find(c=>c.id===id)?.name).join(' + ')}</b>.</p>}</div>
     <div className="filter-bar"><label className="search-box"><span>⌕</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search any player in a trio…" /></label><select value={tier} onChange={e=>setTier(e.target.value)} aria-label="Filter by tier"><option>All tiers</option>{['S','A','B','C','D'].map(t=><option key={t} value={t}>{t} tier</option>)}</select><select value={limit} onChange={e=>setLimit(e.target.value)} aria-label="Results per page"><option value="30">Top 30</option><option value="60">Top 60</option><option value="100">Top 100</option></select></div>
-    <div className="outfield-list">{shown.map((x,i)=><article className="panel lineup-card" key={`${x.cf.id}-${x.lf.id}-${x.rf.id}`}><div className="lineup-rank"><span>#{i+1}</span><span className={`tier-badge ${x.tier.cls}`}>{x.tier.label}</span></div><div className="lineup-players">{[['LF',x.lf],['CF',x.cf],['RF',x.rf]].map(([pos,p])=><div className={`lineup-player ${pos==='CF'?'center-player':''}`} key={pos}><PlayerAvatar player={p}/><div><small>{pos==='CF'?'CENTER FIELD':pos==='LF'?'LEFT FIELD':'RIGHT FIELD'}</small><b>{p.name}</b><span>{p.stats['Fielding Throw Speed'] ?? '—'} throw · {p.stats.Speed ?? '—'} speed · {p.stats.Fielding ?? '—'} fielding</span>{hasSuperDive(p)&&<em>✦ Super Dive</em>}</div></div>)}</div><div className="lineup-score"><b>{x.score.toFixed(1)}</b><small>{x.tier.name}</small></div></article>)}</div>{!shown.length&&<div className="empty-state">No configurations match those filters. Try clearing a player lock or choosing a different combination.</div>}<p className="muted results-note">Showing {shown.length} of {filtered.length.toLocaleString()} matching configurations. Chemistry is evaluated from the center fielder's good-chemistry list; side-to-side chemistry is not required. Each pair of corner fielders is shown once.</p>
+    <div className="outfield-list">{shown.map((x,i)=><article className="panel lineup-card" key={`${x.cf.id}-${x.lf.id}-${x.rf.id}`}><div className="lineup-rank"><span>#{i+1}</span><span className={`tier-badge ${x.tier.cls}`}>{x.tier.label}</span></div><div className="lineup-players">{[['LF',x.lf],['CF',x.cf],['RF',x.rf]].map(([pos,p])=><div className={`lineup-player ${pos==='CF'?'center-player':''}`} key={pos}><PlayerAvatar player={p}/><div><small>{pos==='CF'?'CENTER FIELD':pos==='LF'?'LEFT FIELD':'RIGHT FIELD'}</small><b>{p.name}</b><span>{p.stats['Fielding Throw Speed'] ?? '—'} throw · {p.stats.Speed ?? '—'} speed · {p.stats.Fielding ?? '—'} fielding</span>{hasSuperDive(p)&&<em>✦ {p.ability} </em>}</div></div>)}</div><div className="lineup-score"><b>{x.score.toFixed(1)}</b><small>{x.tier.name}</small></div></article>)}</div>{!shown.length&&<div className="empty-state">No configurations match those filters. Try clearing a player lock or choosing a different combination.</div>}<p className="muted results-note">Showing {shown.length} of {filtered.length.toLocaleString()} matching configurations. Chemistry is evaluated from the center fielder's good-chemistry list; side-to-side chemistry is not required. Each pair of corner fielders is shown once.</p>
   </>;
 }
 // 
@@ -543,9 +765,15 @@ function readDraftState() {
     const saved = localStorage.getItem('ss_draft_state');
     if (!saved) return { picks: [], currentTurnIndex: 0, isPaused: false };
     const parsed = JSON.parse(saved);
+    const picks = Array.isArray(parsed.picks) ? parsed.picks : [];
+    // Do not reinterpret old ten-team/111-pick browser state as the new nine-team schedule.
+    const incompatible = picks.length > TOTAL_MANUAL_PICKS
+      || picks.some((pick, index) => !draftingTeams.includes(pick?.team) || pick.team !== teamForPickIndex(index))
+      || new Set(picks.map(pick => String(pick?.playerId))).size !== picks.length;
+    if (incompatible) return { picks: [], currentTurnIndex: 0, isPaused: false };
     return {
-      picks: Array.isArray(parsed.picks) ? parsed.picks : [],
-      currentTurnIndex: Number.isInteger(parsed.currentTurnIndex) ? parsed.currentTurnIndex : 0,
+      picks,
+      currentTurnIndex: picks.length,
       isPaused: Boolean(parsed.isPaused)
     };
   } catch {
@@ -560,39 +788,34 @@ function DraftTab({ characters, onSelect }) {
   const [managerMode, setManagerMode] = useState(false);
   const [mgrPinInput, setMgrPinInput] = useState('');
   const [authMessage, setAuthMessage] = useState('');
+  const [pendingPlayerId, setPendingPlayerId] = useState('');
+  const [pendingReset, setPendingReset] = useState(false);
+  const pickRequestInFlight = useRef(false);
+  const { draftState, syncStatus, makePick, resetSharedDraft } = useSharedDraftState();
 
-  const [draftState, setDraftState] = useState(readDraftState);
-
-  useEffect(() => {
-    localStorage.setItem('ss_draft_state', JSON.stringify(draftState));
-  }, [draftState]);
-
+  // Demo credentials are configurable in this map; they are client-side, not secure authentication.
   const teamPins = {
-    'Arnav': '1111',
-    'Joey': '2222',
-    'Alex': '3333',
-    'Jared': '4444',
-    'Aadarsh': '5555',
-    'Dhruv': '6666',
-    'Eshaan': '7777',
-    'Henry': '8888',
-    'Matthew': '9999',
-    'A1': '0000'
+    Arnav: '1111', Joey: '2222', Alex: '3333', Jared: '4444', Aadarsh: '5555',
+    Dhruv: '6666', Eshaan: '7777', Henry: '8888', Matthew: '0000'
   };
-  const leagueManagerPin = '1234';
-
-  const draftedIds = new Set(draftState.picks.map(pick => pick.playerId));
-  const availablePlayers = characters.filter(player => !draftedIds.has(player.id));
-  const currentTeam = teamNames[draftState.currentTurnIndex % teamNames.length];
-  const currentRound = Math.floor(draftState.picks.length / teamNames.length) + 1;
-  const isOnClock = signedInTeam === currentTeam || managerMode;
+  const leagueManagerPin = '9999';
+  const pickCount = effectiveDraftPickCount(draftState);
+  const rosterAssignments = getAllRosterAssignments(draftState, characters);
+  const draftedIds = new Set(rosterAssignments.map(pick => String(pick.playerId)));
+  const availablePlayers = characters.filter(player => !draftedIds.has(String(player.id)));
+  const currentTeam = teamForPickIndex(pickCount);
+  const currentRound = roundForPickCount(pickCount);
+  const draftComplete = pickCount >= TOTAL_MANUAL_PICKS;
+  const isConnected = syncStatus === 'live';
+  const isOnClock = !draftComplete && (signedInTeam === currentTeam || managerMode);
+  const canSubmitPicks = isConnected && !draftComplete && !pendingPlayerId && !pendingReset;
 
   function signInTeam(event) {
     event.preventDefault();
     if (selectedTeam && pinInput && teamPins[selectedTeam] === pinInput) {
       setSignedInTeam(selectedTeam);
       setPinInput('');
-      setAuthMessage(`Signed in as ${selectedTeam}. Drafting is enabled only when your team is on the clock.`);
+      setAuthMessage(`Signed in as ${selectedTeam}. ${selectedTeam === currentTeam ? 'Your team is on the clock.' : currentTeam ? `${currentTeam} is currently on the clock.` : 'The draft is complete.'}`);
     } else {
       setSignedInTeam('');
       setAuthMessage('Sign-in failed. Check the selected team and PIN.');
@@ -603,6 +826,7 @@ function DraftTab({ characters, onSelect }) {
     setSignedInTeam('');
     setSelectedTeam('');
     setPinInput('');
+    setManagerMode(false);
     setAuthMessage('You have signed out.');
   }
 
@@ -611,13 +835,22 @@ function DraftTab({ characters, onSelect }) {
     if (mgrPinInput && mgrPinInput === leagueManagerPin) {
       setManagerMode(true);
       setMgrPinInput('');
-      setAuthMessage('Commissioner controls unlocked.');
+      setAuthMessage('Commissioner controls unlocked. Picks still follow the configured 90-pick order.');
     } else {
       setAuthMessage('Commissioner sign-in failed. Check the PIN.');
     }
   }
 
-  function draftPlayer(player) {
+  async function draftPlayer(player) {
+    if (pickRequestInFlight.current || pendingPlayerId) return;
+    if (!isConnected) {
+      setAuthMessage(syncStatus === 'connecting' ? 'The draft is still loading. Please wait a moment before picking.' : 'The draft is temporarily unavailable. Please try again shortly.');
+      return;
+    }
+    if (draftComplete || !currentTeam) {
+      setAuthMessage('The draft is complete. No more picks can be made.');
+      return;
+    }
     if (!managerMode && !signedInTeam) {
       setAuthMessage('Sign in with your team PIN before making a draft pick.');
       return;
@@ -626,28 +859,40 @@ function DraftTab({ characters, onSelect }) {
       setAuthMessage(`${signedInTeam} is signed in, but ${currentTeam} is on the clock.`);
       return;
     }
-    if (draftedIds.has(player.id)) return;
-
-    const pick = {
-      round: currentRound,
-      pickNumber: draftState.picks.length + 1,
-      team: currentTeam,
-      playerId: player.id
-    };
-
-    setDraftState(previous => ({
-      ...previous,
-      picks: [...previous.picks, pick],
-      currentTurnIndex: previous.currentTurnIndex + 1
-    }));
-    setAuthMessage(`${player.name} drafted to ${currentTeam}.`);
+    if (draftedIds.has(String(player.id))) {
+      setAuthMessage(`${player.name} has already been drafted. The player pool is refreshing.`);
+      return;
+    }
+    pickRequestInFlight.current = true;
+    setPendingPlayerId(String(player.id));
+    setAuthMessage(`Submitting ${player.name}'s pick for ${currentTeam}…`);
+    try {
+      const nextState = await makePick(currentTeam, player.id);
+      const nextCount = effectiveDraftPickCount(nextState);
+      const nextTeam = teamForPickIndex(nextCount);
+      setAuthMessage(nextTeam ? `${player.name} drafted to ${currentTeam}. ${nextTeam} is now on the clock.` : `${player.name} drafted to ${currentTeam}. The 90 manual picks are complete; A1 has automatically received the remaining ${A1_AUTO_ASSIGNMENT_COUNT} players.`);
+    } catch (error) {
+      console.error('Draft pick failed:', error);
+      setAuthMessage('That pick could not be completed. Please try again or contact the league organizer.');
+    } finally {
+      pickRequestInFlight.current = false;
+      setPendingPlayerId('');
+    }
   }
 
-  function resetDraft() {
-    if (!managerMode) return;
-    if (window.confirm('Are you sure you want to reset all draft picks?')) {
-      setDraftState({ picks: [], currentTurnIndex: 0, isPaused: false });
-      setAuthMessage('Draft reset.');
+  async function resetDraft() {
+    if (!managerMode || pendingReset || pendingPlayerId) return;
+    if (!window.confirm('Reset all 90 manual draft picks and A1’s automatic assignment? This cannot be undone.')) return;
+    setPendingReset(true);
+    setAuthMessage('Resetting the shared draft…');
+    try {
+      await resetSharedDraft();
+      setAuthMessage('Draft reset successfully. Arnav is on the clock for pick 1.');
+    } catch (error) {
+      console.error('Draft reset failed:', error);
+      setAuthMessage('The draft could not be reset. Please try again or contact the league organizer.');
+    } finally {
+      setPendingReset(false);
     }
   }
 
@@ -657,109 +902,52 @@ function DraftTab({ characters, onSelect }) {
         <div>
           <div className="eyebrow">LIVE LEAGUE DRAFT</div>
           <h2>Draft Room</h2>
-          <p>Sign in as a team manager before making a pick. A team can draft only on its turn; the commissioner can administer the draft.</p>
+          <p>Make your team’s selections and follow the league draft.</p>
         </div>
-        <div className="count-pill">Round {currentRound}<span> · On clock: <b>{currentTeam}</b></span></div>
+        <div className="count-pill">{draftComplete ? 'Complete' : `Round ${currentRound}`}<span> · {draftComplete ? `${TOTAL_MANUAL_PICKS} / ${TOTAL_MANUAL_PICKS} picks · ${TOTAL_PLAYER_COUNT} / ${TOTAL_PLAYER_COUNT} players assigned` : `Pick ${pickCount + 1} / ${TOTAL_MANUAL_PICKS} · On clock: ${currentTeam}`}</span></div>
       </div>
 
       <div className="draft-status-strip">
-        <div>
-          <span className="draft-status-label">YOUR SESSION</span>
-          <strong>{managerMode ? 'Commissioner access' : signedInTeam || 'Not signed in'}</strong>
-        </div>
-        <div>
-          <span className="draft-status-label">DRAFT PERMISSION</span>
-          <strong className={isOnClock ? 'good-text' : 'muted'}>
-            {managerMode ? 'Commissioner override' : !signedInTeam ? 'Sign-in required' : isOnClock ? 'Your team is on the clock' : `${currentTeam} is picking`}
-          </strong>
-        </div>
-        {(signedInTeam || managerMode) && (
-          <button className="reset-filters" type="button" onClick={signOut}>Sign out</button>
-        )}
+        
+        <div><span className="draft-status-label">YOUR SESSION</span><strong>{managerMode ? 'Commissioner access' : signedInTeam || 'Not signed in'}</strong></div>
+        <div><span className="draft-status-label">DRAFT PERMISSION</span><strong className={isOnClock ? 'good-text' : 'muted'}>{draftComplete ? 'Draft complete' : managerMode ? 'Commissioner override' : !signedInTeam ? 'Sign-in required' : isOnClock ? 'Your team is on the clock' : `${currentTeam} is picking`}</strong></div>
+        {(signedInTeam || managerMode) && <button className="reset-filters" type="button" onClick={signOut}>Sign out</button>}
       </div>
+
+      {(syncStatus === 'error' || syncStatus === 'local-only') && <div className="draft-error-banner" role="alert"><strong>Draft temporarily unavailable.</strong> Picks are paused. Please try again in a moment or contact the league organizer.</div>}
 
       <div className="draft-auth-grid">
         <form className="panel draft-auth-card" onSubmit={signInTeam}>
-          <div className="eyebrow">TEAM MANAGER</div>
-          <h3>Sign in to your team</h3>
+          <div className="eyebrow">TEAM MANAGER</div><h3>Sign in to your team</h3>
           <p>Choose your team and enter its PIN. Selecting a team alone does not grant draft access.</p>
-          <label className="control-label">Team
-            <select value={selectedTeam} onChange={event => setSelectedTeam(event.target.value)} required>
-              <option value="">Select your team…</option>
-              {teamNames.map(team => <option key={team} value={team}>{team}</option>)}
-            </select>
-          </label>
-          <label className="control-label">Team PIN
-            <input type="password" value={pinInput} onChange={event => setPinInput(event.target.value)} placeholder="Enter team PIN" autoComplete="current-password" required />
-          </label>
+          <label className="control-label">Team<select value={selectedTeam} onChange={event => setSelectedTeam(event.target.value)} required><option value="">Select your team…</option>{draftingTeams.map(team => <option key={team} value={team}>{team}</option>)}</select></label>
+          <label className="control-label">Team PIN<input type="password" value={pinInput} onChange={event => setPinInput(event.target.value)} placeholder="Enter team PIN" autoComplete="current-password" required /></label>
           <button className="draft-primary-button" type="submit">Sign in</button>
-          {signedInTeam && <p className="draft-session-note">Authenticated as <b>{signedInTeam}</b>.</p>}
+          {signedInTeam && <p className="draft-session-note">Signed in as <b>{signedInTeam}</b>.</p>}
         </form>
-
         <form className="panel draft-auth-card" onSubmit={signInCommissioner}>
-          <div className="eyebrow">LEAGUE ADMINISTRATION</div>
-          <h3>Commissioner access</h3>
-          <p>For the league organizer to reset the draft or administer picks regardless of whose turn it is.</p>
-          {!managerMode ? (
-            <>
-              <label className="control-label">Commissioner PIN
-                <input type="password" value={mgrPinInput} onChange={event => setMgrPinInput(event.target.value)} placeholder="Enter commissioner PIN" autoComplete="current-password" required />
-              </label>
-              <button className="draft-secondary-button" type="submit">Unlock commissioner tools</button>
-            </>
-          ) : (
-            <div className="draft-admin-actions">
-              <span className="draft-admin-badge">Commissioner signed in</span>
-              <button className="reset-filters" type="button" onClick={resetDraft}>Reset entire draft</button>
-            </div>
-          )}
+          <div className="eyebrow">LEAGUE ADMINISTRATION</div><h3>Commissioner access</h3><p>For the league organizer to reset the shared draft.</p>
+          {!managerMode ? <><label className="control-label">Commissioner PIN<input type="password" value={mgrPinInput} onChange={event => setMgrPinInput(event.target.value)} placeholder="Enter commissioner PIN" autoComplete="current-password" required /></label><button className="draft-secondary-button" type="submit">Unlock commissioner tools</button></> : <div className="draft-admin-actions"><span className="draft-admin-badge">Commissioner signed in</span><button className="reset-filters" type="button" onClick={resetDraft} disabled={pendingReset || Boolean(pendingPlayerId)}>{pendingReset ? 'Resetting…' : 'Reset entire draft'}</button></div>}
         </form>
       </div>
-      {authMessage && <p className="draft-feedback" role="status">{authMessage}</p>}
+      {authMessage && <p className="draft-feedback" role="status" aria-live="polite">{authMessage}</p>}
 
       <section className="panel draft-pool-panel">
-        <div className="draft-section-heading">
-          <div>
-            <div className="eyebrow">PLAYER POOL</div>
-            <h3>Available players</h3>
-          </div>
-          <span className="count-pill">{availablePlayers.length}<span> available</span></span>
-        </div>
-        {!signedInTeam && !managerMode && (
-          <div className="draft-locked-notice">
-            <strong>Drafting is locked.</strong>
-            <span>Browse player profiles, but sign in before selecting anyone.</span>
-          </div>
-        )}
+        <div className="draft-section-heading"><div><div className="eyebrow">PLAYER POOL</div><h3>Available players</h3></div><span className="count-pill">{availablePlayers.length}<span> available</span></span></div>
+        {!signedInTeam && !managerMode && <div className="draft-locked-notice"><strong>Drafting is locked.</strong><span>Browse player profiles, but sign in before selecting anyone.</span></div>}
         <div className="draft-player-grid">
           {availablePlayers.map(player => {
-            const canDraft = managerMode || (Boolean(signedInTeam) && signedInTeam === currentTeam);
-            return (
-              <article key={player.id} className={`draft-player-card ${canDraft ? 'draft-player-authorized' : ''}`}>
-                <button className="draft-player-info" type="button" onClick={() => onSelect(player)}>
-                  <PlayerAvatar player={player} />
-                  <span className="player-name-wrap">
-                    <strong>{player.name}</strong>
-                    <small>{player.class || 'Class unknown'} · {player.ability || 'No ability listed'}</small>
-                  </span>
-                  <span className="arrow">↗</span>
-                </button>
-                <button
-                  type="button"
-                  className="draft-pick-button"
-                  disabled={!canDraft}
-                  onClick={() => draftPlayer(player)}
-                  title={!signedInTeam && !managerMode ? 'Sign in to draft' : !canDraft ? `${currentTeam} is on the clock` : `Draft ${player.name}`}
-                >
-                  {!signedInTeam && !managerMode ? 'Sign in to draft' : canDraft ? `Draft to ${currentTeam}` : `Waiting for ${currentTeam}`}
-                </button>
-              </article>
-            );
+            const canDraft = canSubmitPicks && (managerMode || (Boolean(signedInTeam) && signedInTeam === currentTeam));
+            const isPending = pendingPlayerId === String(player.id);
+            const waitingText = !isConnected ? (syncStatus === 'connecting' ? 'Loading…' : 'Unavailable') : draftComplete ? 'Draft complete' : !signedInTeam && !managerMode ? 'Sign in to draft' : !canDraft && !managerMode ? `Waiting for ${currentTeam}` : isPending ? 'Submitting…' : pendingPlayerId ? 'Pick in progress…' : `Draft to ${currentTeam}`;
+            return <article key={player.id} className={`draft-player-card ${canDraft ? 'draft-player-authorized' : ''}`}>
+              <button className="draft-player-info" type="button" onClick={() => onSelect(player)}><PlayerAvatar player={player}/><span className="player-name-wrap"><strong>{player.name}</strong><small>{player.class || 'Class unknown'} · {player.ability || 'No ability listed'}</small></span><span className="arrow">↗</span></button>
+              <button type="button" className="draft-pick-button" disabled={!canDraft} onClick={() => draftPlayer(player)} title={canDraft ? `Draft ${player.name}` : waitingText}>{isPending ? 'Submitting pick…' : waitingText}</button>
+            </article>;
           })}
         </div>
-        {!availablePlayers.length && <div className="empty-state">Every character in the pool has been drafted.</div>}
+        {!availablePlayers.length && <div className="empty-state">Every character in the pool has been drafted, or no players remain in the available pool.</div>}
       </section>
-      <p className="draft-security-note">Prototype note: these demo PINs are checked in the browser and are not secure authentication. Use a server-side sign-in and authorization check before using this for a public competitive league.</p>
     </div>
   );
 }
@@ -820,8 +1008,8 @@ function LineupLabTab({ onSelect }) {
   const lf = playersById.get(defense.LF);
   const rf = playersById.get(defense.RF);
   const outfieldChecks = [
-    { label: 'CF → LF', valid: Boolean(cf && lf && (hasGoodChemistry(cf, lf) || hasGoodChemistry(lf, cf))) },
-    { label: 'CF → RF', valid: Boolean(cf && rf && (hasGoodChemistry(cf, rf) || hasGoodChemistry(rf, cf))) }
+    { label: 'CF → LF', valid: Boolean(cf && lf && hasGoodChemistry(cf, lf)) },
+    { label: 'CF → RF', valid: Boolean(cf && rf && hasGoodChemistry(cf, rf)) }
   ];
   const battingValid = rosterComplete && battingChecks.every(check => check.valid);
   const defenseComplete = defenseEntries.every(entry => entry.player) && !defenseHasDuplicates;
@@ -844,8 +1032,8 @@ function LineupLabTab({ onSelect }) {
   const prospect = playersById.get(prospectId);
   const prospectConnections = prospect ? teamRoster.map(teammate => ({
     teammate,
-    prospectLikesTeammate: hasGoodChemistry(prospect, teammate) || hasGoodChemistry(teammate, prospect),
-    teammateLikesProspect: hasGoodChemistry(teammate, prospect) || hasGoodChemistry(prospect, teammate)
+    prospectLikesTeammate: hasGoodChemistry(prospect, teammate),
+    teammateLikesProspect: hasGoodChemistry(teammate, prospect)
   })) : [];
   const prospectLinkCount = prospectConnections.filter(link => link.prospectLikesTeammate || link.teammateLikesProspect).length;
 
@@ -963,7 +1151,7 @@ function LineupLabTab({ onSelect }) {
             {!teamRoster.length ? <p className="muted">No saved draft picks for {teamToCompare} yet. Draft picks will appear here once the league draft has started.</p> : (
               <div className="prospect-links">{prospectConnections.map(link => <div key={link.teammate.id} className="prospect-link-row"><span>{link.teammate.name}</span><span className={link.prospectLikesTeammate ? 'good-text' : 'muted'}>{link.prospectLikesTeammate ? 'Prospect likes teammate' : '—'}</span><span className={link.teammateLikesProspect ? 'good-text' : 'muted'}>{link.teammateLikesProspect ? 'Teammate likes prospect' : '—'}</span></div>)}</div>
             )}
-            <p className="prospect-caveat">Chemistry is directional in the source data: the report shows both directions separately and does not assume a one-way link is mutual.</p>
+            <p className="prospect-caveat">Chemistry can be one-way. Each column shows whether the prospect likes a teammate and whether the teammate likes the prospect.</p>
           </div>
         ) : <div className="empty-state prospect-empty">Select a prospect to preview how they connect to the current team.</div>}
       </section>
@@ -972,74 +1160,42 @@ function LineupLabTab({ onSelect }) {
 }
 
 function DraftTabBoard({ characters }) {
-  const saved = localStorage.getItem('ss_draft_state');
-  const draftState = saved ? JSON.parse(saved) : { picks: [] };
-  
-  const rounds = 9; // Standard roster size
-  const grid = Array.from({ length: rounds }, () => ({}));
-  
-  draftState.picks.forEach(pick => {
-    const rIndex = pick.round - 1;
-    if (rIndex < rounds) {
-      grid[rIndex][pick.team] = characters.find(c => c.id === pick.playerId);
+  const { draftState } = useSharedDraftState();
+  const rounds = REGULAR_DRAFT_ROUNDS + 1;
+  const grid = Array.from({ length: rounds }, () => Object.fromEntries(teamNames.map(team => [team, []])));
+  const allAssignments = getAllRosterAssignments(draftState, characters);
+  allAssignments.forEach(pick => {
+    const rowIndex = Number(pick.round) - 1;
+    if (rowIndex >= 0 && rowIndex < rounds && grid[rowIndex][pick.team]) {
+      const player = characters.find(character => String(character.id) === String(pick.playerId));
+      if (player) grid[rowIndex][pick.team].push(player);
     }
   });
-
+  const pickCount = effectiveDraftPickCount(draftState);
+  const draftComplete = pickCount >= TOTAL_MANUAL_PICKS;
   return (
     <div>
-      <div className="page-intro">
-        <div>
-          <div className="eyebrow">LEAGUE OVERVIEW</div>
-          <h2>Draft Board Matrix</h2>
-          <p>Complete historical log of picks organized by round and managing team.</p>
-        </div>
-      </div>
-      <div className="panel board">
-        <table>
-          <thead>
-            <tr>
-              <th className="rn">Rd</th>
-              {teamNames.map(t => <th key={t}>{t}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {grid.map((rdData, rIdx) => (
-              <tr key={rIdx}>
-                <td className="rn">R{rIdx + 1}</td>
-                {teamNames.map(t => {
-                  const player = rdData[t];
-                  return (
-                    <td key={t} className={`bc ${player ? '' : 'empty'}`}>
-                      {player ? (
-                        <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
-                          <PlayerAvatar player={player} small />
-                          <div><b>{player.name}</b></div>
-                        </div>
-                      ) : '—'}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <div className="page-intro"><div><div className="eyebrow">LEAGUE OVERVIEW</div><h2>Draft Board Matrix</h2><p>Follow the picks and see each team’s roster take shape.</p></div><div className="count-pill">{pickCount}<span> / {TOTAL_MANUAL_PICKS} manual picks · {draftComplete ? TOTAL_PLAYER_COUNT : pickCount} players assigned</span></div></div>
+      <div className="panel board"><table><thead><tr><th className="rn">Rd</th>{teamNames.map(team => <th key={team}>{team}{team === 'A1' ? <small className="board-auto-label"> · AUTO</small> : null}</th>)}</tr></thead><tbody>
+        {grid.map((rdData, rowIndex) => <tr key={rowIndex}><td className="rn">{rowIndex < REGULAR_DRAFT_ROUNDS ? `R${rowIndex + 1}` : 'Auto'}</td>{teamNames.map(team => { const players = rdData[team]; return <td key={team} className={`bc ${players.length ? '' : 'empty'} ${rowIndex === REGULAR_DRAFT_ROUNDS && team === 'A1' ? 'supplemental-picks-cell' : ''}`}>
+          {players.length ? <div className="board-pick-list">{players.map((player, index) => <div className="board-pick-item" key={`${player.id}-${index}`}><PlayerAvatar player={player} small/><span>{player.name}</span></div>)}</div> : rowIndex === REGULAR_DRAFT_ROUNDS && team === 'A1' && !draftComplete ? 'Assigned after pick 90' : '—'}
+        </td>; })}</tr>)}
+      </tbody></table></div>
     </div>
   );
 }
 
 function RostersTab({ onSelect }) {
   const [team, setTeam] = useState('All teams');
-  const saved = localStorage.getItem('ss_draft_state');
-  const draftState = saved ? JSON.parse(saved) : { picks: [] };
+  const { draftState } = useSharedDraftState();
 
   const rosters = useMemo(() => {
     return teamNames.map(name => {
-      const teamPicks = draftState.picks.filter(p => p.team === name);
-      const players = teamPicks.map(p => characters.find(c => c.id === p.playerId)).filter(Boolean);
+      const teamPicks = getAllRosterAssignments(draftState, characters).filter(p => p.team === name);
+      const players = teamPicks.map(p => characters.find(c => String(c.id) === String(p.playerId))).filter(Boolean);
       return { name, players };
     });
-  }, [draftState]);
+  }, [draftState, characters]);
 
   const visible = rosters.filter(t => team === 'All teams' || t.name === team);
 
@@ -1049,9 +1205,9 @@ function RostersTab({ onSelect }) {
         <div>
           <div className="eyebrow">COMMUNITY LEAGUE</div>
           <h2>Team Rosters</h2>
-          <p>Live rosters updated directly from the draft room persistence storage.</p>
+          <p>Browse each team’s roster and select a player to view their profile.</p>
         </div>
-        <div className="count-pill">4 <span>teams</span></div>
+        <div className="count-pill">{teamNames.length} <span>teams</span></div>
       </div>
       <div className="filter-bar">
         <label className="select-label">Show roster
@@ -1089,9 +1245,9 @@ function RostersTab({ onSelect }) {
 
 export default function App() {
   const [tab,setTab]=useState('Players'); const [selected,setSelected]=useState(null);
-  return <div className="app-shell"><header className="topbar"><a className="brand" href="#" onClick={e=>{e.preventDefault();setTab('Players')}}><span className="brand-mark">ISA</span><span><b>Ingofs Slugging Association</b><small>SEASON 3 HQ</small></span></a><div className="topbar-right"><span className="status-dot"/> RANDOM PATCH DATABASE</div></header>
+  return <div className="app-shell"><header className="topbar"><a className="brand" href="#" onClick={e=>{e.preventDefault();setTab('Players')}}><span className="brand-mark">ISA</span><span><b>Ingofs Slugging Association</b><small>LEAGUE HQ</small></span></a><div className="topbar-right">SEASON 3</div></header>
     <main>
-    <nav className="tabs" aria-label="Main navigation">{TABS.map((t,i)=><button key={t} onClick={()=>setTab(t)} className={tab===t?'tab active':'tab'}><span className="tab-icon">{['◈','⌘','⚾','▤','✎','▦','♧'][i]}</span>{t}</button>)}</nav>
-    <section className="content">{tab==='Players'&&<PlayersTab onSelect={setSelected}/>}{tab==='Chemistry'&&<ChemistryTab/>}{tab==='Lineup Lab'&&<LineupLabTab onSelect={setSelected}/>}{tab==='Rosters'&&<RostersTab onSelect={setSelected}/>}{tab==='Outfield'&&<OutfieldTab/>}{tab==='Draft'&&<DraftTab characters={characters} onSelect={setSelected}/>}{tab==='Draft Board'&&<DraftTabBoard characters={characters}/>}</section>
-    <footer><span>INGOFS SLUGGING ASSOCIATION </span></footer></main><PlayerModal player={selected} close={()=>setSelected(null)}/></div>;
+    <nav className="tabs" aria-label="Main navigation">{TABS.map((t,i)=><button key={t} onClick={()=>setTab(t)} className={tab===t?'tab active':'tab'}><span className="tab-icon">{['◈','⌘','▤','✎','▦','♧'][i]}</span>{t}</button>)}</nav>
+    <section className="content">{tab==='Players'&&<PlayersTab onSelect={setSelected}/>}{tab==='Chemistry'&&<ChemistryTab/>}{tab==='Rosters'&&<RostersTab onSelect={setSelected}/>}{tab==='Outfield'&&<OutfieldTab/>}{tab==='Draft'&&<DraftTab characters={characters} onSelect={setSelected}/>}{tab==='Draft Board'&&<DraftTabBoard characters={characters}/>}</section>
+    <footer><span>Ingofs Slugging Association <span className="footer-dot">•</span> Season 3</span></footer></main><PlayerModal player={selected} close={()=>setSelected(null)}/></div>;
 }

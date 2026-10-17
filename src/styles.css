@@ -107,8 +107,8 @@ footer{border-color:#283443;color:#77879b}
 /* Draft room: explicit authentication state and disabled draft actions */
 .draft-status-strip{display:flex;align-items:center;gap:24px;flex-wrap:wrap;padding:15px 18px;margin:0 0 16px;background:#101925;border:1px solid #2b394a;border-radius:10px}
 .draft-status-strip>div{display:flex;flex-direction:column;gap:5px;min-width:180px;flex:1}
-.draft-status-label{font-size:9px;font-weight:700;letter-spacing:1.2px;color:#7f91a7}
-.draft-status-strip strong{font:600 13px 'Space Grotesk';color:#e9eff7}
+.draft-status-label{font-size:9px;margin:0 16px 0; font-weight:700;letter-spacing:1.2px;color:#7f91a7}
+.draft-status-strip strong{margin:0 16px 0;font:600 13px 'Space Grotesk';color:#e9eff7}
 .draft-auth-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:14px}
 .draft-auth-card{display:flex;flex-direction:column;align-items:stretch;gap:12px}
 .draft-auth-card h3,.draft-section-heading h3{font:700 18px 'Space Grotesk';margin:3px 0 0;color:#f0f4fa}
@@ -213,3 +213,48 @@ footer{border-color:#283443;color:#77879b}
   .prospect-link-row{grid-template-columns:1fr;gap:5px}
   .lineup-verdict{min-width:0}
 }
+
+
+/* Shared draft synchronization status */
+.sync-status { margin-top: 6px; font-size: 0.82rem; font-weight: 600; }
+.sync-live { color: #4dd4a0 !important; }
+.sync-connecting { color: #e6bd62 !important; }
+.sync-local-only { color: var(--muted, #a4aab8) !important; }
+.sync-error { color: #ff8585 !important; }
+
+
+/* Reuse the same stat-bar visual language for gameplay hitboxes and imported season stats. */
+.player-hitbox-stats, .player-imported-stats { margin-top: 12px; padding-top: 10px; border-top: 1px solid #edf0f4; }
+.player-stat-section-title { margin-bottom: 7px; color: #78869a; font-size: 9px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+.player-card .stat-line { margin: 8px 0; }
+.player-card .stat-line-top { font-size: 10px; margin-bottom: 5px; }
+.player-card .stat-line-top b { font-size: 10px; white-space: nowrap; }
+.player-card .stat-line-top small { color: #9aa5b5; font-size: 9px; }
+.player-card .meter { height: 5px; }
+.stat-line-compact { margin: 8px 0; }
+.stat-line-compact .stat-line-top { font-size: 10px; margin-bottom: 5px; }
+.stat-line-compact .stat-line-top b { font-size: 10px; white-space: nowrap; }
+.stat-line-compact .meter { height: 5px; }
+.player-hitbox-stats-compact, .player-imported-stats-compact { margin-top: 9px; padding-top: 8px; }
+.player-hitbox-stats-compact .player-stat-section-title, .player-imported-stats-compact .player-stat-section-title { font-size: 8px; }
+.hitbox-formula-note { margin: 10px 0 0; font-size: .78rem; line-height: 1.5; }
+.board-auto-label { color: #6d7d93; font-size: 9px; }
+.draft-info-banner, .draft-error-banner { margin: 12px 0 18px; padding: 12px 14px; border: 1px solid var(--line, #334155); border-radius: 10px; background: rgba(148,163,184,.08); color: var(--text, #e5e7eb); font-size: .9rem; line-height: 1.5; }
+.draft-error-banner { border-color: rgba(248,113,113,.55); background: rgba(127,29,29,.22); }
+.draft-error-banner strong { margin-right: 5px; }
+.draft-pick-button:disabled { cursor: not-allowed; opacity: .58; }
+.board-pick-list { display: flex; flex-direction: column; gap: 7px; min-width: 150px; }
+.board-pick-item { display: flex; align-items: center; gap: 6px; min-width: 0; font-size: .8rem; }
+.board-pick-item > span { overflow-wrap: anywhere; }
+.supplemental-picks-cell { min-width: 180px; }
+
+/* Distinct roster identity colors for all ten league teams. */
+.team-4{background:#68464b}.team-5{background:#36536d}.team-6{background:#6b5d2e}.team-7{background:#315e60}.team-8{background:#594b72}.team-9{background:#714d2c}
+
+/* Ten-team board needs horizontal scrolling on smaller screens. */
+.board{overflow-x:auto}.board table{min-width:1080px}
+
+.imported-stat-group { margin-top: 8px; }
+.imported-stat-group-label { margin: 7px 0 3px; color: #8995a6; font-size: 8px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+
+.stat-panel .player-hitbox-stats, .stat-panel .player-imported-stats { margin-top: 0; padding-top: 0; border-top: 0; }

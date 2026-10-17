@@ -39,7 +39,17 @@
       "Baby Peach",
       "Black Toad"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Luigi",
+      "gameplayScale": 0.5699999928474426,
+      "diveRadiusRaw": 325.0,
+      "hitboxHeightRaw": 411.0,
+      "diveRadius": 1.8525,
+      "hitboxHeight": 2.3427,
+      "regularCatchRaw": 172.0,
+      "regularCatch": 0.9804
+    }
   },
   {
     "id": "mario",
@@ -79,7 +89,17 @@
       "Blue Mii (M)",
       "Purple Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Mario",
+      "gameplayScale": 0.3400000035762787,
+      "diveRadiusRaw": 389.0,
+      "hitboxHeightRaw": 363.0,
+      "diveRadius": 1.3226,
+      "hitboxHeight": 1.2342,
+      "regularCatchRaw": 223.0,
+      "regularCatch": 0.7582
+    }
   },
   {
     "id": "dk",
@@ -123,7 +143,17 @@
       "Black Yoshi",
       "Purple Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Donkey Kong",
+      "gameplayScale": 0.6000000238418579,
+      "diveRadiusRaw": 282.0,
+      "hitboxHeightRaw": 189.0,
+      "diveRadius": 1.692,
+      "hitboxHeight": 1.134,
+      "regularCatchRaw": 140.0,
+      "regularCatch": 0.84
+    }
   },
   {
     "id": "diddy",
@@ -164,7 +194,17 @@
       "Blue Mii (M)",
       "White Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Diddy Kong",
+      "gameplayScale": 0.3499999940395355,
+      "diveRadiusRaw": 268.0,
+      "hitboxHeightRaw": 401.0,
+      "diveRadius": 0.938,
+      "hitboxHeight": 1.4035,
+      "regularCatchRaw": 218.0,
+      "regularCatch": 0.763
+    }
   },
   {
     "id": "peach",
@@ -201,7 +241,17 @@
       "Magikoopas",
       "Black Kritter"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Peach",
+      "gameplayScale": 1.0,
+      "diveRadiusRaw": 302.0,
+      "hitboxHeightRaw": 223.0,
+      "diveRadius": 3.02,
+      "hitboxHeight": 2.23,
+      "regularCatchRaw": 238.0,
+      "regularCatch": 2.38
+    }
   },
   {
     "id": "daisy",
@@ -240,7 +290,17 @@
       "Kritters",
       "Light Green Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Daisy",
+      "gameplayScale": 1.590000033378601,
+      "diveRadiusRaw": 160.0,
+      "hitboxHeightRaw": 269.0,
+      "diveRadius": 2.544,
+      "hitboxHeight": 4.2771,
+      "regularCatchRaw": 165.0,
+      "regularCatch": 2.6235
+    }
   },
   {
     "id": "birdo",
@@ -277,7 +337,17 @@
       "Monty Mole",
       "Light Blue Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Birdo",
+      "gameplayScale": 1.4800000190734863,
+      "diveRadiusRaw": 387.0,
+      "hitboxHeightRaw": 268.0,
+      "diveRadius": 5.7276,
+      "hitboxHeight": 3.9664,
+      "regularCatchRaw": 199.0,
+      "regularCatch": 2.9452
+    }
   },
   {
     "id": "bowser",
@@ -318,7 +388,17 @@
       "Orange Mii (M)",
       "Light Blue Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Bowser",
+      "gameplayScale": 1.5700000524520874,
+      "diveRadiusRaw": 342.0,
+      "hitboxHeightRaw": 186.0,
+      "diveRadius": 5.3694,
+      "hitboxHeight": 2.9202,
+      "regularCatchRaw": 150.0,
+      "regularCatch": 2.355
+    }
   },
   {
     "id": "bj",
@@ -360,7 +440,17 @@
       "Black Toad",
       "Red Mii (M)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Bowser Jr.",
+      "gameplayScale": 0.3400000035762787,
+      "diveRadiusRaw": 408.0,
+      "hitboxHeightRaw": 285.0,
+      "diveRadius": 1.3872,
+      "hitboxHeight": 0.969,
+      "regularCatchRaw": 235.0,
+      "regularCatch": 0.799
+    }
   },
   {
     "id": "wario",
@@ -401,7 +491,17 @@
       "White Mii (M)",
       "Purple Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Wario",
+      "gameplayScale": 1.0099999904632568,
+      "diveRadiusRaw": 206.0,
+      "hitboxHeightRaw": 387.0,
+      "diveRadius": 2.0806,
+      "hitboxHeight": 3.9087,
+      "regularCatchRaw": 119.0,
+      "regularCatch": 1.2019
+    }
   },
   {
     "id": "waluigi",
@@ -444,7 +544,17 @@
       "Red Mii (M)",
       "Pink Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Waluigi",
+      "gameplayScale": 0.9200000166893005,
+      "diveRadiusRaw": 337.0,
+      "hitboxHeightRaw": 266.0,
+      "diveRadius": 3.1004,
+      "hitboxHeight": 2.4472,
+      "regularCatchRaw": 209.0,
+      "regularCatch": 1.9228
+    }
   },
   {
     "id": "yoshi",
@@ -482,7 +592,17 @@
       "Brown Mii (M)",
       "Purple Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Green Yoshi",
+      "gameplayScale": 0.7400000095367432,
+      "diveRadiusRaw": 322.0,
+      "hitboxHeightRaw": 276.0,
+      "diveRadius": 2.3828,
+      "hitboxHeight": 2.0424,
+      "regularCatchRaw": 149.0,
+      "regularCatch": 1.1026
+    }
   },
   {
     "id": "ryoshi",
@@ -520,7 +640,17 @@
       "Brown Mii (M)",
       "Purple Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Red Yoshi",
+      "gameplayScale": 1.5,
+      "diveRadiusRaw": 142.0,
+      "hitboxHeightRaw": 386.0,
+      "diveRadius": 2.13,
+      "hitboxHeight": 5.79,
+      "regularCatchRaw": 154.0,
+      "regularCatch": 2.31
+    }
   },
   {
     "id": "byoshi",
@@ -558,7 +688,17 @@
       "Brown Mii (M)",
       "Purple Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Blue Yoshi",
+      "gameplayScale": 1.590000033378601,
+      "diveRadiusRaw": 403.0,
+      "hitboxHeightRaw": 326.0,
+      "diveRadius": 6.4077,
+      "hitboxHeight": 5.1834,
+      "regularCatchRaw": 155.0,
+      "regularCatch": 2.4645
+    }
   },
   {
     "id": "yyoshi",
@@ -596,7 +736,17 @@
       "Brown Mii (M)",
       "Purple Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Yellow Yoshi",
+      "gameplayScale": 1.3300000429153442,
+      "diveRadiusRaw": 369.0,
+      "hitboxHeightRaw": 212.0,
+      "diveRadius": 4.9077,
+      "hitboxHeight": 2.8196,
+      "regularCatchRaw": 257.0,
+      "regularCatch": 3.4181
+    }
   },
   {
     "id": "lbyoshi",
@@ -634,7 +784,17 @@
       "Brown Mii (M)",
       "Purple Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Light Blue Yoshi",
+      "gameplayScale": 1.649999976158142,
+      "diveRadiusRaw": 154.0,
+      "hitboxHeightRaw": 295.0,
+      "diveRadius": 2.541,
+      "hitboxHeight": 4.8675,
+      "regularCatchRaw": 156.0,
+      "regularCatch": 2.574
+    }
   },
   {
     "id": "pyoshi",
@@ -672,7 +832,17 @@
       "Brown Mii (M)",
       "Purple Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Pink Yoshi",
+      "gameplayScale": 0.7599999904632568,
+      "diveRadiusRaw": 280.0,
+      "hitboxHeightRaw": 376.0,
+      "diveRadius": 2.128,
+      "hitboxHeight": 2.8576,
+      "regularCatchRaw": 207.0,
+      "regularCatch": 1.5732
+    }
   },
   {
     "id": "blyoshi",
@@ -714,7 +884,17 @@
       "Paratroopas",
       "Light Green Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Unused Yoshi",
+      "gameplayScale": 1.2000000476837158,
+      "diveRadiusRaw": 389.0,
+      "hitboxHeightRaw": 275.0,
+      "diveRadius": 4.668,
+      "hitboxHeight": 3.3,
+      "regularCatchRaw": 126.0,
+      "regularCatch": 1.512
+    }
   },
   {
     "id": "wyoshi",
@@ -756,7 +936,17 @@
       "Funky Kong",
       "Yellow Mii (M)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Unused Yoshi 2",
+      "gameplayScale": 1.5499999523162842,
+      "diveRadiusRaw": 424.0,
+      "hitboxHeightRaw": 270.0,
+      "diveRadius": 6.572,
+      "hitboxHeight": 4.185,
+      "regularCatchRaw": 117.0,
+      "regularCatch": 1.8135
+    }
   },
   {
     "id": "bmario",
@@ -795,7 +985,17 @@
       "Red Mii (F)",
       "Light Green Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Baby Mario",
+      "gameplayScale": 1.6699999570846558,
+      "diveRadiusRaw": 360.0,
+      "hitboxHeightRaw": 273.0,
+      "diveRadius": 6.012,
+      "hitboxHeight": 4.5591,
+      "regularCatchRaw": 209.0,
+      "regularCatch": 3.4903
+    }
   },
   {
     "id": "bluigi",
@@ -834,7 +1034,17 @@
       "Pink Mii (F)",
       "Black Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Baby Luigi",
+      "gameplayScale": 1.0700000524520874,
+      "diveRadiusRaw": 436.0,
+      "hitboxHeightRaw": 341.0,
+      "diveRadius": 4.6652,
+      "hitboxHeight": 3.6487,
+      "regularCatchRaw": 218.0,
+      "regularCatch": 2.3326
+    }
   },
   {
     "id": "bpeach",
@@ -875,7 +1085,17 @@
       "Orange Mii (F)",
       "Black Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Baby Peach",
+      "gameplayScale": 1.649999976158142,
+      "diveRadiusRaw": 157.0,
+      "hitboxHeightRaw": 271.0,
+      "diveRadius": 2.5905,
+      "hitboxHeight": 4.4715,
+      "regularCatchRaw": 184.0,
+      "regularCatch": 3.036
+    }
   },
   {
     "id": "bdaisy",
@@ -919,7 +1139,17 @@
       "Orange Mii (F)",
       "Blue Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Baby Daisy",
+      "gameplayScale": 1.2699999809265137,
+      "diveRadiusRaw": 159.0,
+      "hitboxHeightRaw": 404.0,
+      "diveRadius": 2.0193,
+      "hitboxHeight": 5.1308,
+      "regularCatchRaw": 250.0,
+      "regularCatch": 3.175
+    }
   },
   {
     "id": "bdk",
@@ -961,7 +1191,17 @@
       "Green Mii (M)",
       "Black Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Baby DK",
+      "gameplayScale": 0.9100000262260437,
+      "diveRadiusRaw": 257.0,
+      "hitboxHeightRaw": 237.0,
+      "diveRadius": 2.3387,
+      "hitboxHeight": 2.1567,
+      "regularCatchRaw": 159.0,
+      "regularCatch": 1.4469
+    }
   },
   {
     "id": "kboo",
@@ -999,7 +1239,17 @@
       "Orange Mii (F)",
       "Purple Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "King Boo",
+      "gameplayScale": 0.4000000059604645,
+      "diveRadiusRaw": 405.0,
+      "hitboxHeightRaw": 274.0,
+      "diveRadius": 1.62,
+      "hitboxHeight": 1.096,
+      "regularCatchRaw": 172.0,
+      "regularCatch": 0.688
+    }
   },
   {
     "id": "boo",
@@ -1043,7 +1293,17 @@
       "Red Mii (F)",
       "Pink Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Boo",
+      "gameplayScale": 1.6699999570846558,
+      "diveRadiusRaw": 246.0,
+      "hitboxHeightRaw": 409.0,
+      "diveRadius": 4.1082,
+      "hitboxHeight": 6.8303,
+      "regularCatchRaw": 198.0,
+      "regularCatch": 3.3066
+    }
   },
   {
     "id": "monty",
@@ -1083,7 +1343,17 @@
       "Red Mii (M)",
       "Blue Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Monty Mole",
+      "gameplayScale": 1.6699999570846558,
+      "diveRadiusRaw": 172.0,
+      "hitboxHeightRaw": 235.0,
+      "diveRadius": 2.8724,
+      "hitboxHeight": 3.9245,
+      "regularCatchRaw": 158.0,
+      "regularCatch": 2.6386
+    }
   },
   {
     "id": "bpianta",
@@ -1125,7 +1395,17 @@
       "White Mii (M)",
       "Pink Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Blue Pianta",
+      "gameplayScale": 0.8199999928474426,
+      "diveRadiusRaw": 239.0,
+      "hitboxHeightRaw": 370.0,
+      "diveRadius": 1.9598,
+      "hitboxHeight": 3.034,
+      "regularCatchRaw": 169.0,
+      "regularCatch": 1.3858
+    }
   },
   {
     "id": "rpianta",
@@ -1167,7 +1447,17 @@
       "White Mii (M)",
       "Pink Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Red Pianta",
+      "gameplayScale": 1.5700000524520874,
+      "diveRadiusRaw": 273.0,
+      "hitboxHeightRaw": 243.0,
+      "diveRadius": 4.2861,
+      "hitboxHeight": 3.8151,
+      "regularCatchRaw": 206.0,
+      "regularCatch": 3.2342
+    }
   },
   {
     "id": "ypianta",
@@ -1209,7 +1499,17 @@
       "White Mii (M)",
       "Pink Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Yellow Pianta",
+      "gameplayScale": 1.399999976158142,
+      "diveRadiusRaw": 230.0,
+      "hitboxHeightRaw": 213.0,
+      "diveRadius": 3.22,
+      "hitboxHeight": 2.982,
+      "regularCatchRaw": 128.0,
+      "regularCatch": 1.792
+    }
   },
   {
     "id": "blpianta",
@@ -1254,7 +1554,17 @@
       "Purple Mii (F)",
       "Black Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Unused Pianta",
+      "gameplayScale": 0.47999998927116394,
+      "diveRadiusRaw": 154.0,
+      "hitboxHeightRaw": 225.0,
+      "diveRadius": 0.7392,
+      "hitboxHeight": 1.08,
+      "regularCatchRaw": 187.0,
+      "regularCatch": 0.8976
+    }
   },
   {
     "id": "bnoki",
@@ -1296,7 +1606,17 @@
       "Purple Mii (M)",
       "Yellow Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Blue Noki",
+      "gameplayScale": 0.5400000214576721,
+      "diveRadiusRaw": 376.0,
+      "hitboxHeightRaw": 207.0,
+      "diveRadius": 2.0304,
+      "hitboxHeight": 1.1178,
+      "regularCatchRaw": 254.0,
+      "regularCatch": 1.3716
+    }
   },
   {
     "id": "rnoki",
@@ -1338,7 +1658,17 @@
       "Purple Mii (M)",
       "Yellow Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Red Noki",
+      "gameplayScale": 1.0299999713897705,
+      "diveRadiusRaw": 247.0,
+      "hitboxHeightRaw": 315.0,
+      "diveRadius": 2.5441,
+      "hitboxHeight": 3.2445,
+      "regularCatchRaw": 206.0,
+      "regularCatch": 2.1218
+    }
   },
   {
     "id": "gnoki",
@@ -1380,7 +1710,17 @@
       "Purple Mii (M)",
       "Yellow Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Green Noki",
+      "gameplayScale": 1.2100000381469727,
+      "diveRadiusRaw": 376.0,
+      "hitboxHeightRaw": 210.0,
+      "diveRadius": 4.5496,
+      "hitboxHeight": 2.541,
+      "regularCatchRaw": 223.0,
+      "regularCatch": 2.6983
+    }
   },
   {
     "id": "toadette",
@@ -1420,7 +1760,17 @@
       "Pink Mii (F)",
       "Black Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Toadette",
+      "gameplayScale": 0.6499999761581421,
+      "diveRadiusRaw": 298.0,
+      "hitboxHeightRaw": 382.0,
+      "diveRadius": 1.937,
+      "hitboxHeight": 2.483,
+      "regularCatchRaw": 254.0,
+      "regularCatch": 1.651
+    }
   },
   {
     "id": "toadsworth",
@@ -1460,7 +1810,17 @@
       "Dry Bones",
       "White Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Toadsworth",
+      "gameplayScale": 0.5600000023841858,
+      "diveRadiusRaw": 373.0,
+      "hitboxHeightRaw": 419.0,
+      "diveRadius": 2.0888,
+      "hitboxHeight": 2.3464,
+      "regularCatchRaw": 258.0,
+      "regularCatch": 1.4448
+    }
   },
   {
     "id": "toad",
@@ -1500,7 +1860,17 @@
       "Kritters",
       "Orange Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Red Toad",
+      "gameplayScale": 1.2599999904632568,
+      "diveRadiusRaw": 172.0,
+      "hitboxHeightRaw": 237.0,
+      "diveRadius": 2.1672,
+      "hitboxHeight": 2.9862,
+      "regularCatchRaw": 154.0,
+      "regularCatch": 1.9404
+    }
   },
   {
     "id": "btoad",
@@ -1540,7 +1910,17 @@
       "Kritters",
       "Orange Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Blue Toad",
+      "gameplayScale": 1.5499999523162842,
+      "diveRadiusRaw": 278.0,
+      "hitboxHeightRaw": 296.0,
+      "diveRadius": 4.309,
+      "hitboxHeight": 4.588,
+      "regularCatchRaw": 174.0,
+      "regularCatch": 2.697
+    }
   },
   {
     "id": "ytoad",
@@ -1580,7 +1960,17 @@
       "Kritters",
       "Orange Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Yellow Toad",
+      "gameplayScale": 1.659999966621399,
+      "diveRadiusRaw": 148.0,
+      "hitboxHeightRaw": 401.0,
+      "diveRadius": 2.4568,
+      "hitboxHeight": 6.6566,
+      "regularCatchRaw": 150.0,
+      "regularCatch": 2.49
+    }
   },
   {
     "id": "gtoad",
@@ -1620,7 +2010,17 @@
       "Kritters",
       "Orange Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Green Toad",
+      "gameplayScale": 1.559999942779541,
+      "diveRadiusRaw": 290.0,
+      "hitboxHeightRaw": 422.0,
+      "diveRadius": 4.524,
+      "hitboxHeight": 6.5832,
+      "regularCatchRaw": 138.0,
+      "regularCatch": 2.1528
+    }
   },
   {
     "id": "ptoad",
@@ -1660,7 +2060,17 @@
       "Kritters",
       "Orange Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Purple Toad",
+      "gameplayScale": 0.8799999952316284,
+      "diveRadiusRaw": 392.0,
+      "hitboxHeightRaw": 286.0,
+      "diveRadius": 3.4496,
+      "hitboxHeight": 2.5168,
+      "regularCatchRaw": 254.0,
+      "regularCatch": 2.2352
+    }
   },
   {
     "id": "bltoad",
@@ -1698,7 +2108,17 @@
       "Bowser Jr.",
       "Yellow Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Unused Toad",
+      "gameplayScale": 0.75,
+      "diveRadiusRaw": 152.0,
+      "hitboxHeightRaw": 267.0,
+      "diveRadius": 1.14,
+      "hitboxHeight": 2.0025,
+      "regularCatchRaw": 138.0,
+      "regularCatch": 1.035
+    }
   },
   {
     "id": "bmag",
@@ -1739,7 +2159,17 @@
       "Blue Mii (M)",
       "Light Blue Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Blue Magikoopa",
+      "gameplayScale": 0.8299999833106995,
+      "diveRadiusRaw": 229.0,
+      "hitboxHeightRaw": 237.0,
+      "diveRadius": 1.9007,
+      "hitboxHeight": 1.9671,
+      "regularCatchRaw": 172.0,
+      "regularCatch": 1.4276
+    }
   },
   {
     "id": "rmag",
@@ -1780,7 +2210,17 @@
       "Blue Mii (M)",
       "Light Blue Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Red Magikoopa",
+      "gameplayScale": 1.0700000524520874,
+      "diveRadiusRaw": 166.0,
+      "hitboxHeightRaw": 335.0,
+      "diveRadius": 1.7762,
+      "hitboxHeight": 3.5845,
+      "regularCatchRaw": 210.0,
+      "regularCatch": 2.247
+    }
   },
   {
     "id": "gmag",
@@ -1821,7 +2261,17 @@
       "Blue Mii (M)",
       "Light Blue Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Green Magikoopa",
+      "gameplayScale": 1.0800000429153442,
+      "diveRadiusRaw": 438.0,
+      "hitboxHeightRaw": 378.0,
+      "diveRadius": 4.7304,
+      "hitboxHeight": 4.0824,
+      "regularCatchRaw": 135.0,
+      "regularCatch": 1.458
+    }
   },
   {
     "id": "ymag",
@@ -1862,7 +2312,17 @@
       "Blue Mii (M)",
       "Light Blue Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Yellow Magikoopa",
+      "gameplayScale": 0.7599999904632568,
+      "diveRadiusRaw": 344.0,
+      "hitboxHeightRaw": 281.0,
+      "diveRadius": 2.6144,
+      "hitboxHeight": 2.1356,
+      "regularCatchRaw": 265.0,
+      "regularCatch": 2.014
+    }
   },
   {
     "id": "petey",
@@ -1901,7 +2361,17 @@
       "Red Mii (M)",
       "White Mii (M)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Petey Piranha",
+      "gameplayScale": 0.9300000071525574,
+      "diveRadiusRaw": 213.0,
+      "hitboxHeightRaw": 261.0,
+      "diveRadius": 1.9809,
+      "hitboxHeight": 2.4273,
+      "regularCatchRaw": 255.0,
+      "regularCatch": 2.3715
+    }
   },
   {
     "id": "dixie",
@@ -1944,7 +2414,17 @@
       "Bros",
       "Light Green Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Dixie Kong",
+      "gameplayScale": 0.6899999976158142,
+      "diveRadiusRaw": 201.0,
+      "hitboxHeightRaw": 225.0,
+      "diveRadius": 1.3869,
+      "hitboxHeight": 1.5525,
+      "regularCatchRaw": 161.0,
+      "regularCatch": 1.1109
+    }
   },
   {
     "id": "goomba",
@@ -1985,7 +2465,17 @@
       "Pink Mii (F)",
       "Brown Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Goomba",
+      "gameplayScale": 1.3899999856948853,
+      "diveRadiusRaw": 355.0,
+      "hitboxHeightRaw": 407.0,
+      "diveRadius": 4.9345,
+      "hitboxHeight": 5.6573,
+      "regularCatchRaw": 199.0,
+      "regularCatch": 2.7661
+    }
   },
   {
     "id": "paragoomba",
@@ -2024,7 +2514,17 @@
       "Light Green Mii (M)",
       "Green Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Paragoomba",
+      "gameplayScale": 0.5299999713897705,
+      "diveRadiusRaw": 180.0,
+      "hitboxHeightRaw": 364.0,
+      "diveRadius": 0.954,
+      "hitboxHeight": 1.9292,
+      "regularCatchRaw": 224.0,
+      "regularCatch": 1.1872
+    }
   },
   {
     "id": "gkoopa",
@@ -2065,7 +2565,17 @@
       "Light Blue Mii (M)",
       "Brown Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Green Koopa Troopa",
+      "gameplayScale": 0.9800000190734863,
+      "diveRadiusRaw": 404.0,
+      "hitboxHeightRaw": 399.0,
+      "diveRadius": 3.9592,
+      "hitboxHeight": 3.9102,
+      "regularCatchRaw": 239.0,
+      "regularCatch": 2.3422
+    }
   },
   {
     "id": "rkoopa",
@@ -2106,7 +2616,17 @@
       "Light Blue Mii (M)",
       "Brown Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Red Koopa Troopa",
+      "gameplayScale": 0.8999999761581421,
+      "diveRadiusRaw": 388.0,
+      "hitboxHeightRaw": 344.0,
+      "diveRadius": 3.492,
+      "hitboxHeight": 3.096,
+      "regularCatchRaw": 211.0,
+      "regularCatch": 1.899
+    }
   },
   {
     "id": "bkoopa",
@@ -2143,7 +2663,17 @@
       "Blue Mii (M)",
       "Yellow Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Unused Koopa",
+      "gameplayScale": 0.3499999940395355,
+      "diveRadiusRaw": 422.0,
+      "hitboxHeightRaw": 222.0,
+      "diveRadius": 1.477,
+      "hitboxHeight": 0.777,
+      "regularCatchRaw": 145.0,
+      "regularCatch": 0.5075
+    }
   },
   {
     "id": "gpara",
@@ -2185,7 +2715,17 @@
       "Black Yoshi",
       "Black Pianta"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Green Koopa Paratroopa",
+      "gameplayScale": 1.1100000143051147,
+      "diveRadiusRaw": 150.0,
+      "hitboxHeightRaw": 382.0,
+      "diveRadius": 1.665,
+      "hitboxHeight": 4.2402,
+      "regularCatchRaw": 184.0,
+      "regularCatch": 2.0424
+    }
   },
   {
     "id": "rpara",
@@ -2227,7 +2767,17 @@
       "Black Yoshi",
       "Black Pianta"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Red Koopa Paratroopa",
+      "gameplayScale": 0.7900000214576721,
+      "diveRadiusRaw": 169.0,
+      "hitboxHeightRaw": 220.0,
+      "diveRadius": 1.3351,
+      "hitboxHeight": 1.738,
+      "regularCatchRaw": 163.0,
+      "regularCatch": 1.2877
+    }
   },
   {
     "id": "rshy",
@@ -2264,7 +2814,17 @@
       "Funky Kong",
       "Orange Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Red Shy Guy",
+      "gameplayScale": 0.4300000071525574,
+      "diveRadiusRaw": 409.0,
+      "hitboxHeightRaw": 207.0,
+      "diveRadius": 1.7587,
+      "hitboxHeight": 0.8901,
+      "regularCatchRaw": 235.0,
+      "regularCatch": 1.0105
+    }
   },
   {
     "id": "bshy",
@@ -2301,7 +2861,17 @@
       "Funky Kong",
       "Orange Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Blue Shy Guy",
+      "gameplayScale": 1.4500000476837158,
+      "diveRadiusRaw": 418.0,
+      "hitboxHeightRaw": 341.0,
+      "diveRadius": 6.061,
+      "hitboxHeight": 4.9445,
+      "regularCatchRaw": 256.0,
+      "regularCatch": 3.712
+    }
   },
   {
     "id": "yshy",
@@ -2338,7 +2908,17 @@
       "Funky Kong",
       "Orange Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Yellow Shy Guy",
+      "gameplayScale": 1.6200000047683716,
+      "diveRadiusRaw": 313.0,
+      "hitboxHeightRaw": 428.0,
+      "diveRadius": 5.0706,
+      "hitboxHeight": 6.9336,
+      "regularCatchRaw": 203.0,
+      "regularCatch": 3.2886
+    }
   },
   {
     "id": "gshy",
@@ -2375,7 +2955,17 @@
       "Funky Kong",
       "Orange Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Green Shy Guy",
+      "gameplayScale": 1.5099999904632568,
+      "diveRadiusRaw": 429.0,
+      "hitboxHeightRaw": 207.0,
+      "diveRadius": 6.4779,
+      "hitboxHeight": 3.1257,
+      "regularCatchRaw": 129.0,
+      "regularCatch": 1.9479
+    }
   },
   {
     "id": "gguy",
@@ -2412,7 +3002,17 @@
       "Funky Kong",
       "Orange Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Gray Shy Guy",
+      "gameplayScale": 0.949999988079071,
+      "diveRadiusRaw": 440.0,
+      "hitboxHeightRaw": 208.0,
+      "diveRadius": 4.18,
+      "hitboxHeight": 1.976,
+      "regularCatchRaw": 187.0,
+      "regularCatch": 1.7765
+    }
   },
   {
     "id": "graybones",
@@ -2453,7 +3053,17 @@
       "Orange Mii (M)",
       "Red Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Gray Dry Bones",
+      "gameplayScale": 0.3799999952316284,
+      "diveRadiusRaw": 324.0,
+      "hitboxHeightRaw": 376.0,
+      "diveRadius": 1.2312,
+      "hitboxHeight": 1.4288,
+      "regularCatchRaw": 152.0,
+      "regularCatch": 0.5776
+    }
   },
   {
     "id": "gdry",
@@ -2494,7 +3104,17 @@
       "Orange Mii (M)",
       "Red Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Green Dry Bones",
+      "gameplayScale": 0.8500000238418579,
+      "diveRadiusRaw": 387.0,
+      "hitboxHeightRaw": 290.0,
+      "diveRadius": 3.2895,
+      "hitboxHeight": 2.465,
+      "regularCatchRaw": 151.0,
+      "regularCatch": 1.2835
+    }
   },
   {
     "id": "rdry",
@@ -2535,7 +3155,17 @@
       "Orange Mii (M)",
       "Red Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Dark Bones",
+      "gameplayScale": 1.190000057220459,
+      "diveRadiusRaw": 398.0,
+      "hitboxHeightRaw": 430.0,
+      "diveRadius": 4.7362,
+      "hitboxHeight": 5.117,
+      "regularCatchRaw": 126.0,
+      "regularCatch": 1.4994
+    }
   },
   {
     "id": "bdry",
@@ -2576,7 +3206,17 @@
       "Orange Mii (M)",
       "Red Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Blue Dry Bones",
+      "gameplayScale": 1.3300000429153442,
+      "diveRadiusRaw": 278.0,
+      "hitboxHeightRaw": 317.0,
+      "diveRadius": 3.6974,
+      "hitboxHeight": 4.2161,
+      "regularCatchRaw": 241.0,
+      "regularCatch": 3.2053
+    }
   },
   {
     "id": "hammer",
@@ -2615,7 +3255,17 @@
       "Black Pianta",
       "Purple Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Hammer Bro",
+      "gameplayScale": 0.7799999713897705,
+      "diveRadiusRaw": 238.0,
+      "hitboxHeightRaw": 180.0,
+      "diveRadius": 1.8564,
+      "hitboxHeight": 1.404,
+      "regularCatchRaw": 255.0,
+      "regularCatch": 1.989
+    }
   },
   {
     "id": "fire",
@@ -2654,7 +3304,17 @@
       "Black Pianta",
       "Purple Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Fire Bro",
+      "gameplayScale": 1.1200000047683716,
+      "diveRadiusRaw": 244.0,
+      "hitboxHeightRaw": 237.0,
+      "diveRadius": 2.7328,
+      "hitboxHeight": 2.6544,
+      "regularCatchRaw": 154.0,
+      "regularCatch": 1.7248
+    }
   },
   {
     "id": "boomerang",
@@ -2693,7 +3353,17 @@
       "Black Pianta",
       "Purple Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Boomerang Bro",
+      "gameplayScale": 0.3100000023841858,
+      "diveRadiusRaw": 206.0,
+      "hitboxHeightRaw": 267.0,
+      "diveRadius": 0.6386,
+      "hitboxHeight": 0.8277,
+      "regularCatchRaw": 262.0,
+      "regularCatch": 0.8122
+    }
   },
   {
     "id": "wiggler",
@@ -2730,7 +3400,17 @@
       "Piantas",
       "Baby Peach"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Wiggler",
+      "gameplayScale": 1.2799999713897705,
+      "diveRadiusRaw": 283.0,
+      "hitboxHeightRaw": 223.0,
+      "diveRadius": 3.6224,
+      "hitboxHeight": 2.8544,
+      "regularCatchRaw": 242.0,
+      "regularCatch": 3.0976
+    }
   },
   {
     "id": "blooper",
@@ -2770,7 +3450,17 @@
       "Baby DK",
       "White Yoshi"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Blooper",
+      "gameplayScale": 1.2699999809265137,
+      "diveRadiusRaw": 388.0,
+      "hitboxHeightRaw": 260.0,
+      "diveRadius": 4.9276,
+      "hitboxHeight": 3.302,
+      "regularCatchRaw": 269.0,
+      "regularCatch": 3.4163
+    }
   },
   {
     "id": "funky",
@@ -2815,7 +3505,17 @@
       "Yellow Mii (F)",
       "Pink Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Funky Kong",
+      "gameplayScale": 0.9800000190734863,
+      "diveRadiusRaw": 163.0,
+      "hitboxHeightRaw": 293.0,
+      "diveRadius": 1.5974,
+      "hitboxHeight": 2.8714,
+      "regularCatchRaw": 199.0,
+      "regularCatch": 1.9502
+    }
   },
   {
     "id": "tiny",
@@ -2853,7 +3553,17 @@
       "Baby Daisy",
       "Yellow Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Tiny Kong",
+      "gameplayScale": 0.3499999940395355,
+      "diveRadiusRaw": 344.0,
+      "hitboxHeightRaw": 169.0,
+      "diveRadius": 1.204,
+      "hitboxHeight": 0.5915,
+      "regularCatchRaw": 161.0,
+      "regularCatch": 0.5635
+    }
   },
   {
     "id": "gkritter",
@@ -2897,7 +3607,17 @@
       "Green Mii (M)",
       "Blue Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Green Kritter",
+      "gameplayScale": 0.8799999952316284,
+      "diveRadiusRaw": 213.0,
+      "hitboxHeightRaw": 207.0,
+      "diveRadius": 1.8744,
+      "hitboxHeight": 1.8216,
+      "regularCatchRaw": 268.0,
+      "regularCatch": 2.3584
+    }
   },
   {
     "id": "blukritter",
@@ -2941,7 +3661,17 @@
       "Green Mii (M)",
       "Blue Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Blue Kritter",
+      "gameplayScale": 1.1100000143051147,
+      "diveRadiusRaw": 329.0,
+      "hitboxHeightRaw": 337.0,
+      "diveRadius": 3.6519,
+      "hitboxHeight": 3.7407,
+      "regularCatchRaw": 139.0,
+      "regularCatch": 1.5429
+    }
   },
   {
     "id": "rkritter",
@@ -2985,7 +3715,17 @@
       "Green Mii (M)",
       "Blue Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Red Kritter",
+      "gameplayScale": 0.6600000262260437,
+      "diveRadiusRaw": 281.0,
+      "hitboxHeightRaw": 187.0,
+      "diveRadius": 1.8546,
+      "hitboxHeight": 1.2342,
+      "regularCatchRaw": 240.0,
+      "regularCatch": 1.584
+    }
   },
   {
     "id": "brkritter",
@@ -3029,7 +3769,17 @@
       "Green Mii (M)",
       "Blue Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Brown Kritter",
+      "gameplayScale": 1.0,
+      "diveRadiusRaw": 179.0,
+      "hitboxHeightRaw": 281.0,
+      "diveRadius": 1.79,
+      "hitboxHeight": 2.81,
+      "regularCatchRaw": 126.0,
+      "regularCatch": 1.26
+    }
   },
   {
     "id": "bkritter",
@@ -3070,7 +3820,17 @@
       "Light Green Mii (F)",
       "White Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Unused Kritter",
+      "gameplayScale": 1.4199999570846558,
+      "diveRadiusRaw": 343.0,
+      "hitboxHeightRaw": 283.0,
+      "diveRadius": 4.8706,
+      "hitboxHeight": 4.0186,
+      "regularCatchRaw": 258.0,
+      "regularCatch": 3.6636
+    }
   },
   {
     "id": "krool",
@@ -3109,7 +3869,17 @@
       "Pink Mii (M)",
       "Red Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "King K. Rool",
+      "gameplayScale": 0.8399999737739563,
+      "diveRadiusRaw": 346.0,
+      "hitboxHeightRaw": 180.0,
+      "diveRadius": 2.9064,
+      "hitboxHeight": 1.512,
+      "regularCatchRaw": 158.0,
+      "regularCatch": 1.3272
+    }
   },
   {
     "id": "rmm",
@@ -3152,7 +3922,17 @@
       "Bowser Jr.",
       "Petey Piranha"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Red Mii (M)",
+      "gameplayScale": 0.6499999761581421,
+      "diveRadiusRaw": 195.0,
+      "hitboxHeightRaw": 269.0,
+      "diveRadius": 1.2675,
+      "hitboxHeight": 1.7485,
+      "regularCatchRaw": 141.0,
+      "regularCatch": 0.9165
+    }
   },
   {
     "id": "rmf",
@@ -3196,7 +3976,17 @@
       "Pink Mii (M)",
       "Black Mii (M)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Red Mii (F)",
+      "gameplayScale": 1.0399999618530273,
+      "diveRadiusRaw": 369.0,
+      "hitboxHeightRaw": 269.0,
+      "diveRadius": 3.8376,
+      "hitboxHeight": 2.7976,
+      "regularCatchRaw": 182.0,
+      "regularCatch": 1.8928
+    }
   },
   {
     "id": "omm",
@@ -3240,7 +4030,17 @@
       "King K. Rool",
       "Black Pianta"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Orange Mii (M)",
+      "gameplayScale": 1.4199999570846558,
+      "diveRadiusRaw": 160.0,
+      "hitboxHeightRaw": 222.0,
+      "diveRadius": 2.272,
+      "hitboxHeight": 3.1524,
+      "regularCatchRaw": 250.0,
+      "regularCatch": 3.55
+    }
   },
   {
     "id": "omf",
@@ -3283,7 +4083,17 @@
       "Light Blue Mii (M)",
       "Purple Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Orange Mii (F)",
+      "gameplayScale": 1.340000033378601,
+      "diveRadiusRaw": 183.0,
+      "hitboxHeightRaw": 168.0,
+      "diveRadius": 2.4522,
+      "hitboxHeight": 2.2512,
+      "regularCatchRaw": 175.0,
+      "regularCatch": 2.345
+    }
   },
   {
     "id": "ymm",
@@ -3325,7 +4135,17 @@
       "Black Toad",
       "Light Blue Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Yellow Mii (M)",
+      "gameplayScale": 1.4299999475479126,
+      "diveRadiusRaw": 255.0,
+      "hitboxHeightRaw": 332.0,
+      "diveRadius": 3.6465,
+      "hitboxHeight": 4.7476,
+      "regularCatchRaw": 144.0,
+      "regularCatch": 2.0592
+    }
   },
   {
     "id": "ymf",
@@ -3366,7 +4186,17 @@
       "Funky Kong",
       "Black Koopa"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Yellow Mii (F)",
+      "gameplayScale": 1.0099999904632568,
+      "diveRadiusRaw": 240.0,
+      "hitboxHeightRaw": 220.0,
+      "diveRadius": 2.424,
+      "hitboxHeight": 2.222,
+      "regularCatchRaw": 210.0,
+      "regularCatch": 2.121
+    }
   },
   {
     "id": "lgmm",
@@ -3406,7 +4236,17 @@
       "Black Kritter",
       "Green Mii (M)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Light Green Mii (M)",
+      "gameplayScale": 1.4600000381469727,
+      "diveRadiusRaw": 182.0,
+      "hitboxHeightRaw": 273.0,
+      "diveRadius": 2.6572,
+      "hitboxHeight": 3.9858,
+      "regularCatchRaw": 152.0,
+      "regularCatch": 2.2192
+    }
   },
   {
     "id": "lgmf",
@@ -3443,7 +4283,17 @@
       "Dixie Kong",
       "Black Yoshi"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Light Green Mii (F)",
+      "gameplayScale": 0.6299999952316284,
+      "diveRadiusRaw": 161.0,
+      "hitboxHeightRaw": 305.0,
+      "diveRadius": 1.0143,
+      "hitboxHeight": 1.9215,
+      "regularCatchRaw": 256.0,
+      "regularCatch": 1.6128
+    }
   },
   {
     "id": "gmm",
@@ -3487,7 +4337,17 @@
       "Brown Mii (M)",
       "Red Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Green Mii (M)",
+      "gameplayScale": 0.7200000286102295,
+      "diveRadiusRaw": 419.0,
+      "hitboxHeightRaw": 236.0,
+      "diveRadius": 3.0168,
+      "hitboxHeight": 1.6992,
+      "regularCatchRaw": 191.0,
+      "regularCatch": 1.3752
+    }
   },
   {
     "id": "gmf",
@@ -3525,7 +4385,17 @@
       "Paragoomba",
       "Pink Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Green Mii (F)",
+      "gameplayScale": 0.4399999976158142,
+      "diveRadiusRaw": 155.0,
+      "hitboxHeightRaw": 391.0,
+      "diveRadius": 0.682,
+      "hitboxHeight": 1.7204,
+      "regularCatchRaw": 164.0,
+      "regularCatch": 0.7216
+    }
   },
   {
     "id": "bmm",
@@ -3566,7 +4436,17 @@
       "Black Koopa",
       "Light Blue Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Blue Mii (M)",
+      "gameplayScale": 1.3899999856948853,
+      "diveRadiusRaw": 424.0,
+      "hitboxHeightRaw": 205.0,
+      "diveRadius": 5.8936,
+      "hitboxHeight": 2.8495,
+      "regularCatchRaw": 216.0,
+      "regularCatch": 3.0024
+    }
   },
   {
     "id": "bmf",
@@ -3606,7 +4486,17 @@
       "Baby Daisy",
       "Light Blue Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Blue Mii (F)",
+      "gameplayScale": 1.0800000429153442,
+      "diveRadiusRaw": 197.0,
+      "hitboxHeightRaw": 371.0,
+      "diveRadius": 2.1276,
+      "hitboxHeight": 4.0068,
+      "regularCatchRaw": 225.0,
+      "regularCatch": 2.43
+    }
   },
   {
     "id": "lbmm",
@@ -3646,7 +4536,17 @@
       "Orange Mii (F)",
       "Pink Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Light Blue Mii (M)",
+      "gameplayScale": 1.659999966621399,
+      "diveRadiusRaw": 386.0,
+      "hitboxHeightRaw": 211.0,
+      "diveRadius": 6.4076,
+      "hitboxHeight": 3.5026,
+      "regularCatchRaw": 134.0,
+      "regularCatch": 2.2244
+    }
   },
   {
     "id": "lbmf",
@@ -3689,7 +4589,17 @@
       "Yellow Mii (M)",
       "Blue Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Light Blue Mii (F)",
+      "gameplayScale": 1.6100000143051147,
+      "diveRadiusRaw": 336.0,
+      "hitboxHeightRaw": 287.0,
+      "diveRadius": 5.4096,
+      "hitboxHeight": 4.6207,
+      "regularCatchRaw": 249.0,
+      "regularCatch": 4.0089
+    }
   },
   {
     "id": "pmm",
@@ -3728,7 +4638,17 @@
       "Red Mii (F)",
       "Green Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Pink Mii (M)",
+      "gameplayScale": 1.5299999713897705,
+      "diveRadiusRaw": 154.0,
+      "hitboxHeightRaw": 324.0,
+      "diveRadius": 2.3562,
+      "hitboxHeight": 4.9572,
+      "regularCatchRaw": 250.0,
+      "regularCatch": 3.825
+    }
   },
   {
     "id": "pmf",
@@ -3771,7 +4691,17 @@
       "Funky Kong",
       "Light Blue Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Pink Mii (F)",
+      "gameplayScale": 0.6600000262260437,
+      "diveRadiusRaw": 338.0,
+      "hitboxHeightRaw": 187.0,
+      "diveRadius": 2.2308,
+      "hitboxHeight": 1.2342,
+      "regularCatchRaw": 251.0,
+      "regularCatch": 1.6566
+    }
   },
   {
     "id": "pumm",
@@ -3815,7 +4745,17 @@
       "Baby Daisy",
       "Brown Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Purple Mii (M)",
+      "gameplayScale": 0.5600000023841858,
+      "diveRadiusRaw": 402.0,
+      "hitboxHeightRaw": 333.0,
+      "diveRadius": 2.2512,
+      "hitboxHeight": 1.8648,
+      "regularCatchRaw": 196.0,
+      "regularCatch": 1.0976
+    }
   },
   {
     "id": "pumf",
@@ -3859,7 +4799,17 @@
       "Orange Mii (F)",
       "White Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Purple Mii (F)",
+      "gameplayScale": 0.6600000262260437,
+      "diveRadiusRaw": 147.0,
+      "hitboxHeightRaw": 323.0,
+      "diveRadius": 0.9702,
+      "hitboxHeight": 2.1318,
+      "regularCatchRaw": 213.0,
+      "regularCatch": 1.4058
+    }
   },
   {
     "id": "brmm",
@@ -3899,7 +4849,17 @@
       "Green Mii (M)",
       "Purple Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Brown Mii (M)",
+      "gameplayScale": 0.41999998688697815,
+      "diveRadiusRaw": 285.0,
+      "hitboxHeightRaw": 280.0,
+      "diveRadius": 1.197,
+      "hitboxHeight": 1.176,
+      "regularCatchRaw": 132.0,
+      "regularCatch": 0.5544
+    }
   },
   {
     "id": "brmf",
@@ -3936,7 +4896,17 @@
       "Goomba",
       "Purple Mii (M)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "Brown Mii (F)",
+      "gameplayScale": 0.8399999737739563,
+      "diveRadiusRaw": 428.0,
+      "hitboxHeightRaw": 409.0,
+      "diveRadius": 3.5952,
+      "hitboxHeight": 3.4356,
+      "regularCatchRaw": 187.0,
+      "regularCatch": 1.5708
+    }
   },
   {
     "id": "wmm",
@@ -3977,7 +4947,17 @@
       "Petey Piranha",
       "Black Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "White Mii (M)",
+      "gameplayScale": 1.2799999713897705,
+      "diveRadiusRaw": 374.0,
+      "hitboxHeightRaw": 256.0,
+      "diveRadius": 4.7872,
+      "hitboxHeight": 3.2768,
+      "regularCatchRaw": 173.0,
+      "regularCatch": 2.2144
+    }
   },
   {
     "id": "wmf",
@@ -4020,7 +5000,17 @@
       "Black Mii (M)",
       "Purple Mii (F)"
     ],
-    "superDive": true
+    "superDive": true,
+    "hitboxes": {
+      "sourceCharacterName": "White Mii (F)",
+      "gameplayScale": 0.8600000143051147,
+      "diveRadiusRaw": 202.0,
+      "hitboxHeightRaw": 192.0,
+      "diveRadius": 1.7372,
+      "hitboxHeight": 1.6512,
+      "regularCatchRaw": 218.0,
+      "regularCatch": 1.8748
+    }
   },
   {
     "id": "blmm",
@@ -4060,7 +5050,17 @@
       "White Mii (F)",
       "Black Mii (F)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Black Mii (M)",
+      "gameplayScale": 1.0,
+      "diveRadiusRaw": 245.0,
+      "hitboxHeightRaw": 276.0,
+      "diveRadius": 2.45,
+      "hitboxHeight": 2.76,
+      "regularCatchRaw": 220.0,
+      "regularCatch": 2.2
+    }
   },
   {
     "id": "blmf",
@@ -4104,6 +5104,16 @@
       "White Mii (M)",
       "Black Mii (M)"
     ],
-    "superDive": false
+    "superDive": false,
+    "hitboxes": {
+      "sourceCharacterName": "Black Mii (F)",
+      "gameplayScale": 0.4699999988079071,
+      "diveRadiusRaw": 436.0,
+      "hitboxHeightRaw": 241.0,
+      "diveRadius": 2.0492,
+      "hitboxHeight": 1.1327,
+      "regularCatchRaw": 131.0,
+      "regularCatch": 0.6157
+    }
   }
 ]
