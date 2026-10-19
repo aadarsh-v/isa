@@ -553,10 +553,10 @@ function teamForPickIndex(index) {
   const numTeams = draftingTeams.length;
   const round = Math.floor(index / numTeams); 
   const pickInRound = index % numTeams;
-  if (round < 4) {
+  if (round < 2) {
     return draftingTeams[pickInRound];
   }
-  const isBackward = (round % 2 === 0);
+  const isBackward = (round % 2 === 1);
   const targetIndex = isBackward ? (numTeams - 1 - pickInRound) : pickInRound;
   return draftingTeams[targetIndex];
 }
