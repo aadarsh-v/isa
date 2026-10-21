@@ -126,6 +126,7 @@ function PlayerAvatar({ player, small = false }) {
   return <div className={cls} aria-hidden="true">{initials(player.name)}</div>;
 }
 const HITBOX_STAT_MAX = 7;
+const GAMEPLAY_SCALE_MAX = 2;
 function StatBar({ label, value, max, maxLabel, formatValue, compact = false }) {
   const valid = typeof value === 'number' && Number.isFinite(value);
   const shownValue = valid ? (formatValue ? formatValue(value) : value) : '—';
@@ -156,6 +157,7 @@ function getSortValue(player, key) {
   if (key === 'hitbox:diveRadius') return player?.hitboxes?.diveRadius;
   if (key === 'hitbox:regularCatch') return player?.hitboxes?.regularCatch;
   if (key === 'hitbox:hitboxHeight') return player?.hitboxes?.hitboxHeight;
+  if (key === 'hitbox:gameplayScale') return player?.hitboxes?.gameplayScale;
   if (key.startsWith('season:')) return importedStatistics?.[player?.id]?.[key.slice('season:'.length)];
   return player?.stats?.[key];
 }
@@ -172,6 +174,7 @@ function HitboxMetrics({ player, compact = false, showTitle = true }) {
     <StatBar label="Dive radius" value={hitboxes?.diveRadius} max={HITBOX_STAT_MAX} maxLabel={HITBOX_STAT_MAX.toFixed(1)} formatValue={v => v.toFixed(2)} compact={compact} />
     <StatBar label="Regular catch" value={hitboxes?.regularCatch} max={HITBOX_STAT_MAX} maxLabel={HITBOX_STAT_MAX.toFixed(1)} formatValue={v => v.toFixed(2)} compact={compact} />
     <StatBar label="Hitbox height" value={hitboxes?.hitboxHeight} max={HITBOX_STAT_MAX} maxLabel={HITBOX_STAT_MAX.toFixed(1)} formatValue={v => v.toFixed(2)} compact={compact} />
+    <StatBar label="Gameplay scale" value={hitboxes?.gameplayScale} max={GAMEPLAY_SCALE_MAX} maxLabel={GAMEPLAY_SCALE_MAX.toFixed(1)} formatValue={v => v.toFixed(2)} compact={compact} />
   </div>;
 }
 function ImportedStatistics({ player, compact = false }) {
@@ -226,6 +229,9 @@ function PlayerModal({ player, close }) {
   </section></div>;
 }
 function PlayersTab({ onSelect }) {
+  const { draftState } = useSharedDraftState();
+  const [draftStatus, setDraftStatus] = useState('All players');
+  const draftedIds = useMemo(() => new Set(getAllRosterAssignments(draftState, characters).map(pick => String(pick.playerId))), [draftState]);
   const [query,setQuery]=useState('');
   const [klass,setKlass]=useState('All classes');
   const [ability,setAbility]=useState('All abilities');
@@ -245,6 +251,7 @@ function PlayersTab({ onSelect }) {
     {key:'hitbox:diveRadius',label:'Dive radius',group:'Gameplay hitboxes'},
     {key:'hitbox:regularCatch',label:'Regular catch',group:'Gameplay hitboxes'},
     {key:'hitbox:hitboxHeight',label:'Hitbox height',group:'Gameplay hitboxes'},
+    {key:'hitbox:gameplayScale',label:'Gameplay scale',group:'Gameplay hitboxes'},
     ...statisticDefinitions.map(def=>({key:`season:${def.key}`,label:`${def.label}${def.category?` · ${def.category}`:''}`,group:'Season statistics'}))
   ];
   const filtered=useMemo(()=>characters.filter(c=>{
@@ -254,7 +261,8 @@ function PlayersTab({ onSelect }) {
       && (ability==='All abilities'||c.ability===ability)
       && (captain==='All players'||(captain==='Captains'?c.captain:!c.captain))
       && (trajectory==='All trajectories'||c.stats?.Trajectory===trajectory)
-      && (hitCurve==='All hit curves'||c.stats?.['Hit Curve']===hitCurve);
+      && (hitCurve==='All hit curves'||c.stats?.['Hit Curve']===hitCurve)
+      && (draftStatus==='All players'||(draftStatus==='Drafted'?draftedIds.has(String(c.id)):!draftedIds.has(String(c.id))));
   }).sort((a,b)=>{
     const av=getSortValue(a,sortBy), bv=getSortValue(b,sortBy);
     const aMissing=av===null||av===undefined||av===''||typeof av==='number'&&!Number.isFinite(av);
@@ -264,8 +272,8 @@ function PlayersTab({ onSelect }) {
     if(aMissing&&bMissing) return a.name.localeCompare(b.name);
     let cmp=sortBy==='name'?String(av).localeCompare(String(bv)):Number(av)-Number(bv);
     return (sortDir==='asc'?cmp:-cmp)||a.name.localeCompare(b.name);
-  }),[query,klass,ability,captain,trajectory,hitCurve,sortBy,sortDir]);
-  const resetFilters=()=>{setQuery('');setKlass('All classes');setAbility('All abilities');setCaptain('All players');setTrajectory('All trajectories');setHitCurve('All hit curves');setSortBy('name');setSortDir('asc');};
+  }),[query,klass,ability,captain,trajectory,hitCurve,draftStatus,draftedIds,sortBy,sortDir]);
+  const resetFilters=()=>{setQuery('');setKlass('All classes');setAbility('All abilities');setCaptain('All players');setTrajectory('All trajectories');setHitCurve('All hit curves');setDraftStatus('All players');setSortBy('name');setSortDir('asc');};
   return <><div className="page-intro"><div><div className="eyebrow">PLAYER DIRECTORY</div><h2>Explore Players</h2><p>Compare player attributes, gameplay hitboxes, and season performance.</p></div><div className="count-pill">{filtered.length} <span>/ {characters.length} players</span></div></div>
     <div className="index-toolbar panel">
       <label className="search-box"><span>⌕</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search players or abilities…" /></label>
@@ -274,6 +282,7 @@ function PlayersTab({ onSelect }) {
       <label className="control-label">Class<select value={klass} onChange={e=>setKlass(e.target.value)}>{classes.map(x=><option key={x}>{x}</option>)}</select></label>
       <label className="control-label">Ability<select value={ability} onChange={e=>setAbility(e.target.value)}>{abilities.map(x=><option key={x}>{x}</option>)}</select></label>
       <label className="control-label">Roster role<select value={captain} onChange={e=>setCaptain(e.target.value)}><option>All players</option><option>Captains</option><option>Non-captains</option></select></label>
+      <label className="control-label">Draft status<select value={draftStatus} onChange={e=>setDraftStatus(e.target.value)}><option>All players</option><option>Drafted</option><option>Undrafted</option></select></label>
       <label className="control-label">Trajectory<select value={trajectory} onChange={e=>setTrajectory(e.target.value)}>{trajectories.map(x=><option key={x}>{x}</option>)}</select></label>
       <label className="control-label">Hit curve<select value={hitCurve} onChange={e=>setHitCurve(e.target.value)}>{hitCurves.map(x=><option key={x}>{x}</option>)}</select></label>
       <button className="reset-filters" onClick={resetFilters}>Reset filters</button>
@@ -595,6 +604,17 @@ function useSharedDraftState() {
   const [syncStatus, setSyncStatus] = useState(supabase ? 'connecting' : 'local-only');
 
   useEffect(() => {
+    if (supabase) return undefined;
+    const refreshFromLocalState = event => setDraftState(event?.detail?.picks ? event.detail : readDraftState());
+    window.addEventListener('ss-draft-state-updated', refreshFromLocalState);
+    window.addEventListener('storage', refreshFromLocalState);
+    return () => {
+      window.removeEventListener('ss-draft-state-updated', refreshFromLocalState);
+      window.removeEventListener('storage', refreshFromLocalState);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!supabase) {
       setSyncStatus('local-only');
       return undefined;
@@ -662,6 +682,7 @@ function useSharedDraftState() {
         currentTurnIndex: pickCount + 1
       };
       setDraftState(next);
+      window.dispatchEvent(new CustomEvent('ss-draft-state-updated', { detail: next }));
       return next;
     }
     if (!supabaseUrl || !supabaseAnonKey) throw new Error('Supabase is not configured. Check the VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY build variables.');
@@ -677,6 +698,7 @@ function useSharedDraftState() {
     if (!supabase) {
       const empty = { ...INITIAL_DRAFT_STATE };
       setDraftState(empty);
+      window.dispatchEvent(new CustomEvent('ss-draft-state-updated', { detail: empty }));
       return empty;
     }
     const { data, error } = await supabase.rpc('reset_league_draft');
