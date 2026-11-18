@@ -55,8 +55,8 @@ const IMAGE_MAP = {
   "blmf": "femalemiimugshot.png",
 };
 
-// const TABS = ['Players', 'Chemistry', 'Outfield', 'Draft', 'Draft Board', 'Rosters', 'Standings', 'Player Stats', 'Team Projections', 'Player Projections', 'Game Simulations'];
-const TABS = ['Players', 'Chemistry', 'Outfield', 'Draft', 'Draft Board', 'Rosters', 'Standings', 'Team Projections', 'Game Simulations'];
+const TABS = ['Players', 'Chemistry', 'Outfield', 'Draft', 'Draft Board', 'Rosters', 'Standings', 'Player Stats', 'Team Projections', 'Player Projections', 'Game Simulations'];
+// const TABS = ['Players', 'Chemistry', 'Outfield', 'Draft', 'Draft Board', 'Rosters', 'Standings', 'Team Projections', 'Game Simulations'];
 const statGroups = {
   Batting: ['Slap Contact', 'Charge Contact', 'Slap Power', 'Charge Power', 'Bunting'],
   Pitching: ['Fastball Speed', 'Curveball Speed', 'Curve', 'Stamina'],
@@ -1303,19 +1303,112 @@ function StandingsTab({ data }) {
 const BATTING_KEYS=['pa','ab','hits','hr','rbi','runs','so','ba','slg','ops'];
 const PITCHING_KEYS=['ip','h_allowed','r_allowed','so_pitched','ra9','hits_per_ip'];
 function PlayerStatsTab({ data }) {
- const players=asArray(data?.players); const [query,setQuery]=useState(''); const [kind,setKind]=useState('All'); const [sort,setSort]=useState('ba'); const [direction,setDirection]=useState('desc');
+ const players=asArray(data?.players); 
+ const [query,setQuery]=useState(''); 
+ const [kind,setKind]=useState('All'); 
+ const [sort,setSort]=useState('ba'); 
+ const [direction,setDirection]=useState('desc');
+ 
  if(!data || !players.length) return <LeagueDataNotice/>;
  const filtered=players.filter(p=>(`${p.name||''} ${p.player_id||''} ${managerFor(p.team_id||p.manager)}`.toLowerCase().includes(query.toLowerCase()))&&(kind==='All'||(kind==='Batting'?BATTING_KEYS.some(k=>numberOrNull(p.actual?.[k]??p.actual_stats?.[k]??p[k])!==null):numberOrNull(p.actual?.ip_outs??p.actual_stats?.ip_outs??p.ip_outs??p.actual?.ip??p.actual_stats?.ip??p.ip)!==null)));
- const rows=[...filtered].sort((a,b)=>{const av=numberOrNull(a.actual?.[sort]??a[sort]);const bv=numberOrNull(b.actual?.[sort]??b[sort]);return (av===null?-Infinity:av)-(bv===null?-Infinity:bv) * (direction==='asc'?1:-1);});
- return <><LeaguePageHeader eyebrow="PLAYER PERFORMANCE" title="Actual Player Stats" description="What players have produced so far this season. Filter by player or team and sort any statistic." meta={<SnapshotMeta data={data}/>}/><div className="league-toolbar"><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search player or manager…"/><select value={kind} onChange={e=>setKind(e.target.value)}><option>All</option><option>Batting</option><option>Pitching</option></select><select value={sort} onChange={e=>setSort(e.target.value)}>{[...BATTING_KEYS,...PITCHING_KEYS].map(k=><option key={k} value={k}>{statLabel(k)}</option>)}</select><button className="sort-direction" onClick={()=>setDirection(d=>d==='asc'?'desc':'asc')}>{direction==='desc'?'High → low':'Low → high'}</button></div><div className="panel league-table-panel"><div className="league-panel-heading"><div><h3>Season-to-date performance</h3><p>Batting and pitching totals; defensive DP/TP metrics are intentionally excluded</p></div><span className="league-pill actual-pill">ACTUAL</span></div><div className="table-scroll"><table className="league-table"><thead><tr><th>Player</th><th>Manager</th>{(kind==='Pitching'?PITCHING_KEYS:kind==='Batting'?BATTING_KEYS:[...BATTING_KEYS,...PITCHING_KEYS]).map(k=><th key={k}>{statLabel(k)}</th>)}</tr></thead><tbody>{rows.map(p=>{const actual=p.actual||p.actual_stats||p;const manager=managerFor(p.team_id||p.manager);return <tr key={p.player_id||p.name}><td><b>{p.name||p.player_id}</b></td><td>{manager}</td>{(kind==='Pitching'?PITCHING_KEYS:kind==='Batting'?BATTING_KEYS:[...BATTING_KEYS,...PITCHING_KEYS]).map(k=>{let value=actual[k];if(k==='ip'&&value===undefined&&actual.ip_outs!==undefined)value=Number(actual.ip_outs)/3;return <td key={k}>{value===undefined||value===null?'—':fmt(value,k==='ba'||k==='slg'||k==='ops'||k==='ra9'||k==='hits_per_ip'?3:1)}</td>})}</tr>})}</tbody></table></div>{!rows.length&&<p className="muted league-no-results">No players match this search.</p>}</div></>;
+ const rows=[...filtered].sort((a,b)=>{
+  const av=numberOrNull(a.actual?.[sort]??a[sort]) ?? -Infinity;
+  const bv=numberOrNull(b.actual?.[sort]??b[sort]) ?? -Infinity;
+    const modifier = direction === 'asc' ? 1 : -1;
+  return (av - bv) * modifier;
+});
+ return <><LeaguePageHeader eyebrow="PLAYER PERFORMANCE" title="Actual Player Stats" description="What players have produced so far this season. Filter by player or team and sort any statistic." meta={<SnapshotMeta data={data}/>}/><div className="league-toolbar"><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search player or manager…"/><select value={kind} onChange={e=>setKind(e.target.value)}><option>All</option><option>Batting</option><option>Pitching</option></select><select value={sort} onChange={e=>setSort(e.target.value)}>{[...BATTING_KEYS,...PITCHING_KEYS].map(k=><option key={k} value={k}>{statLabel(k)}</option>)}</select><button className="sort-direction" onClick={()=>setDirection(d=>d==='asc'?'desc':'asc')}>{direction==='desc'?'High → low':'Low → high'}</button></div><div className="panel league-table-panel"><div className="league-panel-heading"><div><h3>Season-to-Date Performance</h3></div></div><div className="table-scroll"><table className="league-table"><thead><tr><th>Player</th><th>Manager</th>{(kind==='Pitching'?PITCHING_KEYS:kind==='Batting'?BATTING_KEYS:[...BATTING_KEYS,...PITCHING_KEYS]).map(k=><th key={k}>{statLabel(k)}</th>)}</tr></thead><tbody>{rows.map(p=>{const actual=p.actual||p.actual_stats||p;const manager=managerFor(p.team_id||p.manager);return <tr key={p.player_id||p.name}><td><b>{p.name||p.player_id}</b></td><td>{manager}</td>{(kind==='Pitching'?PITCHING_KEYS:kind==='Batting'?BATTING_KEYS:[...BATTING_KEYS,...PITCHING_KEYS]).map(k=>{let value=actual[k];if(k==='ip'&&value===undefined&&actual.ip_outs!==undefined)value=Number(actual.ip_outs)/3;return <td key={k}>{value===undefined||value===null?'—':fmt(value,k==='ba'||k==='slg'||k==='ops'||k==='ra9'||k==='hits_per_ip'?3:1)}</td>})}</tr>})}</tbody></table></div>{!rows.length&&<p className="muted league-no-results">No players match this search.</p>}</div></>;
 }
 function PlayerProjectionsTab({ data }) {
- const players=asArray(data?.players); const [period,setPeriod]=useState('full_season'); const [metric,setMetric]=useState('hr'); const [query,setQuery]=useState('');
- if(!data || !players.length) return <LeagueDataNotice/>;
- const eligible=players.filter(p=>p[period]||p.projections?.[period]); const filtered=eligible.filter(p=>`${p.name||''} ${managerFor(p.team_id||p.manager)}`.toLowerCase().includes(query.toLowerCase()));
- const projection=p=>p[period]||p.projections?.[period]||{};
- const rows=filtered.map(p=>({p,pr:projection(p),dist:projection(p)[metric]||projection(p).batting?.[metric]||projection(p).pitching?.[metric]})).filter(x=>x.dist).sort((a,b)=>(numberOrNull(b.dist.mean)??-Infinity)-(numberOrNull(a.dist.mean)??-Infinity));
- return <><LeaguePageHeader eyebrow="PLAYER FORECASTS" title="Player Projections" description="Expected production for the rest of the season or the full season, with a visible range for uncertainty." meta={<SnapshotMeta data={data}/>}/><div className="league-toolbar"><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search player or manager…"/><select value={period} onChange={e=>setPeriod(e.target.value)}><option value="full_season">Full season</option><option value="rest_of_season">Rest of season</option></select><select value={metric} onChange={e=>setMetric(e.target.value)}>{['hr','rbi','runs','hits','ba','slg','ops','so','ip','ra9','hits_per_ip'].map(k=><option key={k} value={k}>{statLabel(k)}</option>)}</select></div><div className="projection-grid">{rows.map(({p,dist})=><article className="panel projection-card" key={p.player_id||p.name}><div className="projection-card-heading"><div><b>{p.name}</b><small>{managerFor(p.team_id||p.manager)} · {franchiseFor(managerFor(p.team_id||p.manager))}</small></div><span className="projection-metric">{statLabel(metric)}</span></div><ProjectionRange mean={dist.mean} p10={dist.p10} p50={dist.p50} p90={dist.p90} digits={['ba','slg','ops','ra9','hits_per_ip'].includes(metric)?3:1}/><div className="projection-mean-label">Mean projection <b>{fmt(dist.mean,['ba','slg','ops','ra9','hits_per_ip'].includes(metric)?3:1)}</b></div></article>)}</div>{!rows.length&&<div className="empty-state">No projection values found for this metric and filter.</div>}<p className="projection-explainer"><b>How to read this:</b> The mean is the model's average outcome. P10–P90 is the middle 80% of simulated outcomes; the median (P50) is available below each range.</p></>;
+ const players = asArray(data?.players); 
+ const [period, setPeriod] = useState('full_season'); 
+ const [metric, setMetric] = useState('hr'); 
+ const [query, setQuery] = useState('');
+
+ if (!data || !players.length) return <LeagueDataNotice />;
+
+ const eligible = players.filter(p => p[period] && typeof p[period] === 'object'); 
+ const filtered = eligible.filter(p => `${p.player_name || p.name || ''} ${managerFor(p.team_id || p.manager)}`.toLowerCase().includes(query.toLowerCase()));
+ 
+ const getDistribution = (p) => {
+   const periodData = p[period];
+   if (!periodData) return null;
+   const meanVal = periodData.mean?.[metric];
+   if (meanVal === undefined) return null;
+   
+   return {
+     mean: periodData.mean?.[metric],
+     p10: periodData.p10?.[metric],
+     p50: periodData.p50?.[metric],
+     p90: periodData.p90?.[metric]
+   };
+ };
+
+ // Determine if the current metric should sort low->high (ascending)
+ const isLowBest = ['ra9', 'hits_per_ip'].includes(metric);
+ const sortMultiplier = isLowBest ? 1 : -1;
+
+ const rows = filtered.map(p => ({
+   p, 
+   dist: getDistribution(p)
+ })).filter(x => x.dist !== null && x.dist.mean !== undefined)
+   .sort((a, b) => {
+     const valA = numberOrNull(a.dist.mean) ?? (isLowBest ? Infinity : -Infinity);
+     const valB = numberOrNull(b.dist.mean) ?? (isLowBest ? Infinity : -Infinity);
+     
+     // Multiplier flips order for ra9 and hits_per_ip
+     return (valA - valB) * sortMultiplier;
+   });
+
+ return (
+   <>
+     <LeaguePageHeader 
+       eyebrow="PLAYER FORECASTS" 
+       title="Player Projections" 
+       description="Expected production for the rest of the season or the full season, with a visible range for uncertainty." 
+       meta={<SnapshotMeta data={data}/>}
+     />
+     <div className="league-toolbar">
+       <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search player or manager…"/>
+       <select value={period} onChange={e => setPeriod(e.target.value)}>
+         <option value="full_season">Full season</option>
+         <option value="rest_of_season">Rest of season</option>
+       </select>
+       <select value={metric} onChange={e => setMetric(e.target.value)}>
+         {['hr','rbi','runs','hits','ba','slg','ops','so','ip','ra9','hits_per_ip'].map(k => (
+           <option key={k} value={k}>{statLabel(k)}</option>
+         ))}
+       </select>
+     </div>
+     <div className="projection-grid">
+       {rows.map(({ p, dist }) => (
+         <article className="panel projection-card" key={p.player_id || p.player_name || p.name}>
+           <div className="projection-card-heading">
+             <div>
+               <b>{p.player_name || p.name}</b>
+               <small>{managerFor(p.team_id || p.manager)} · {franchiseFor(managerFor(p.team_id || p.manager))}</small>
+             </div>
+             <span className="projection-metric">{statLabel(metric)}</span>
+           </div>
+           <ProjectionRange 
+             mean={dist.mean} 
+             p10={dist.p10} 
+             p50={dist.p50} 
+             p90={dist.p90} 
+             digits={['ba','slg','ops','ra9','hits_per_ip'].includes(metric) ? 3 : 1}
+           />
+           <div className="projection-mean-label">
+             Mean projection <b>{fmt(dist.mean, ['ba','slg','ops','ra9','hits_per_ip'].includes(metric) ? 3 : 1)}</b>
+           </div>
+         </article>
+       ))}
+     </div>
+     {!rows.length && <div className="empty-state">No projection values found for this metric and filter.</div>}
+     <p className="projection-explainer">
+       <b>How to read this:</b> The mean is the model's average outcome. P10–P90 is the middle 80% of simulated outcomes; the median (P50) is available below each range.
+     </p>
+   </>
+ );
 }
 function TeamProjectionsTab({ data }) {
  const teams=asArray(data?.teams); if(!data||!teams.length)return <LeagueDataNotice/>;
