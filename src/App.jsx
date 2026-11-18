@@ -55,7 +55,8 @@ const IMAGE_MAP = {
   "blmf": "femalemiimugshot.png",
 };
 
-const TABS = ['Players', 'Chemistry', 'Outfield', 'Draft', 'Draft Board', 'Rosters', 'Standings', 'Player Stats', 'Team Projections', 'Player Projections', 'Game Simulations'];
+//const TABS = ['Players', 'Chemistry', 'Outfield', 'Draft', 'Draft Board', 'Rosters', 'Standings', 'Player Stats', 'Team Projections', 'Player Projections', 'Game Simulations'];
+const TABS = ['Players', 'Chemistry', 'Rosters', 'Standings', 'Player Stats', 'Team Projections', 'Player Projections', 'Game Simulations'];
 // const TABS = ['Players', 'Chemistry', 'Outfield', 'Draft', 'Draft Board', 'Rosters', 'Standings', 'Team Projections', 'Game Simulations'];
 const statGroups = {
   Batting: ['Slap Contact', 'Charge Contact', 'Slap Power', 'Charge Power', 'Bunting'],
